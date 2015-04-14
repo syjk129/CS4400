@@ -36,9 +36,10 @@ CREATE TABLE IF NOT EXISTS Book (
     publisher VARCHAR(30) ,
     place_of_publication VARCHAR(30),
     copyright_year INT,
-is_book_on_reserve ENUM('Y','N') DEFAULT 'N',
-shelf_num INT NOT NULL,
-name VARCHAR(30) NOT NULL,
+    is_book_on_reserve ENUM('Y','N') DEFAULT 'N',
+    shelf_num INT NOT NULL,
+    name VARCHAR(30) NOT NULL,
+    cost INT,
     PRIMARY KEY(isbn)
     );
 

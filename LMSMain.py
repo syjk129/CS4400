@@ -1,14 +1,3 @@
-#
-# NAME: John Barbour
-# SECTION: A2
-# GT ID/EMAIL: jbarbour3@gatech.edu / 903038970
-# COLLABORATION STATEMENT:
-# I worked on this homework alone
-# and referred to the following in addition to
-# this semester's course materials for CS 2316.
-#
-#
-#upate
 from tkinter import *
 import re
 import urllib.request
@@ -27,6 +16,15 @@ class Gateway:
         self.confirmpassword = StringVar()
         self.currentuser = ''
 
+        #-----CreateProfileVariables-----#
+        self.dob = StringVar()
+        self.email = StringVar()
+        self.address = StringVar()
+        self.lastname = StringVar()
+        self.gender = StringVar()
+        self.faculty = StringVar()
+        self.department = StringVar()
+
         #Download and prep the IMAGE
         self.image = None
         response = urllib.request.urlopen("http://www.cc.gatech.edu/classes/AY2015/cs2316_fall/codesamples/techlogo.gif")
@@ -36,11 +34,7 @@ class Gateway:
         self.image = PhotoImage(data=img)
 
         #---------LOGIN PAGE---------#
-
-        #TITLE
         self.root.title("Login")
-
-        #image
         l = Label(self.root, image=self.image)
         l.pack()
 
@@ -68,11 +62,9 @@ class Gateway:
         Button(frame3,text="Register", command=self.switch).pack(side=RIGHT)
 
 
-        #----------REGISTER PAGE------------#
-        self.root2 = Toplevel()
-
-        #TITLE
-        self.root2.title("Room Reservation New User Registration")
+        #----------New User Registration Page------------#
+        self.root21 = Toplevel()
+        self.root21.title("New User Registration")
 
         # url = "http://www.or.gatech.edu/images/isye-icon.gif"
         #
@@ -86,168 +78,217 @@ class Gateway:
         # image = PhotoImage(data=img)
 
         #image
-        L = Label(self.root2, image=self.image)
+        L = Label(self.root21, image=self.image)
         L.pack()
 
-        #LASTNAME
-        framea = Frame(self.root2)
-        framea.pack(fill=BOTH, expand=True)
-        Label(framea,text="Last Name:           ").pack(side=LEFT)
-        self.reglastname = Entry(framea, width=30, textvariable=self.lastname)
-        self.reglastname.pack(side=LEFT)
-        Label(framea,text="                  ").pack(side=LEFT, anchor=E)
-
         #USERNAME
-        frameb = Frame(self.root2)
-        frameb.pack(fill=BOTH, expand=True)
-        Label(frameb,text="Username:            ").pack(side=LEFT)
-        self.regusername = Entry(frameb, width=30, textvariable=self.username)
+        framez = Frame(self.root21)
+        framez.pack(fill=BOTH, expand=True)
+        Label(framez,text="Username:            ").pack(side=LEFT)
+        self.regusername = Entry(framez, width=30, textvariable=self.username)
         self.regusername.pack(side=LEFT)
 
         #PASSWORD
-        framec = Frame(self.root2)
+        framec = Frame(self.root21)
         framec.pack(fill=BOTH, expand=True)
         Label(framec,text="Password:             ").pack(side=LEFT)
         self.regpassword = Entry(framec, width=30, textvariable=self.password)
         self.regpassword.pack(side=LEFT)
 
         #CONFIRMPASSWORD
-        framed = Frame(self.root2)
+        framed = Frame(self.root21)
         framed.pack(fill=BOTH, expand=True)
         Label(framed,text="Confirm Password:").pack(side=LEFT, anchor=E)
         self.regconfirmpassword = Entry(framed, width=30, textvariable=self.confirmpassword)
         self.regconfirmpassword.pack(side=LEFT)
 
         #BUTTONS
-        framee = Frame(self.root2)
+        framee = Frame(self.root21)
         framee.pack(fill=BOTH, expand=True)
         Button(framee,text="Register", command=self.RegisterNew).pack(side=RIGHT)
-        Button(framee,text="Cancel", command=self.switch2).pack(side=RIGHT)
+        Button(framee,text="Cancel", command=self.switch2122).pack(side=RIGHT)
+        self.root21.withdraw()
 
-        self.root2.withdraw()
+        #------Create Profile Page------#
+        self.root22 = Toplevel()
+        self.root22.title('Create Profile')
+
+
+        L = Label(self.root22, image=self.image)
+        L.pack()
+        framet = Frame(self.root22)
+        framet.pack()
+        frametl = Frame(framet)
+        frametl.pack(side=RIGHT)
+        frametr =Frame(framet)
+        frametr.pack(side=RIGHT)
+
+        frametl1 = Frame(frametl)
+        frametl1.pack(fill=BOTH, expand=True)
+        self.regfirstname = Entry(frametl1, width=30, textvariable=self.lastname)
+        self.regfirstname.pack(side=RIGHT)
+        Label(frametl1,text="First Name:").pack(side=RIGHT)
+
+
+        frametl2 = Frame(frametl)
+        frametl2.pack(fill=BOTH, expand=True)
+        self.regdob = Entry(frametl2, width=30, textvariable=self.dob)
+        self.regdob.pack(side=RIGHT)
+        Label(frametl2,text="D.O.B:").pack(side=RIGHT)
+
+
+        frametl3 = Frame(frametl)
+        frametl3.pack(fill=BOTH, expand=True)
+        self.regemail = Entry(frametl3, width=30, textvariable=self.email)
+        self.regemail.pack(side=RIGHT)
+        Label(frametl3,text="Email:").pack(side=RIGHT)
+
+
+        frametl4 = Frame(frametl)
+        frametl4.pack(fill=BOTH, expand=True)
+        self.regaddress = Entry(frametl4, width=30, textvariable=self.address)
+        self.regaddress.pack(side=RIGHT)
+        Label(frametl4,text="Address:").pack(side=RIGHT)
+
+
+
+        frametr1 = Frame(frametr)
+        frametr1.pack(fill=BOTH, expand=True)
+        self.reglastname = Entry(frametr1, width=30, textvariable=self.lastname)
+        self.reglastname.pack(side=RIGHT)
+        Label(frametr1,text="Last Name:").pack(side=RIGHT)
+
+
+        frametr2 = Frame(frametr)
+        frametr2.pack(fill=BOTH, expand=True)
+        self.reggender = Entry(frametr2, width=30, textvariable=self.gender)
+        self.reggender.pack(side=RIGHT)
+        Label(frametr2,text="Gender:").pack(side=RIGHT)
+
+        frametr3 = Frame(frametr)
+        frametr3.pack(fill=BOTH, expand=True)
+        self.regfaculty = Entry(frametr3, width=30, textvariable=self.faculty)
+        self.regfaculty.pack(side=RIGHT)
+        Label(frametr3,text="Faculty:").pack(side=RIGHT)
+
+
+        frametr4 = Frame(frametr)
+        frametr4.pack(fill=BOTH, expand=True)
+        self.regdepartment = Entry(frametr4, width=30, textvariable=self.department)
+        self.regdepartment.pack(side=RIGHT)
+        Label(frametr4,text="Department:").pack(side=RIGHT)
+
+
+        frametr5 = Frame(self.root22)
+        frametr5.pack(expand=True,fill=BOTH)
+        Button(frametr5,text='Submit',command=self.createProfile).pack(side=RIGHT)
+        Button(frametr5,text='Cancel',command=self.switch22).pack(side=RIGHT)
+
+
+        self.root22.withdraw()
 
     def Homepage(self):
-        self.menu = ('Search Books','Report 1', 'Report 2', 'Damaged Book', 'Frequent Users')
-        self.switches = ('SBSwitch', 'R1Switch', 'R2Switch', 'Night')
-        self.building = ('CULC','Klaus')
-        # self.floor = (1, 2, 3, 4)
-        # self.room = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-        # self.currentreservation1=StringVar()
-        # self.currentreservation1.set('')
-        # self.currentreservation2=StringVar()
-        # self.currentreservation2.set('')
 
-        self.root3 = Toplevel()
+        #---variables---#
+        self.publisher=StringVar()
+        self.isbn=StringVar()
+        self.edition=StringVar()
+        self.title=StringVar()
+        self.author=StringVar()
+
+
+
+        self.root3 = Toplevel() #creates the 'Homepage' window.
         self.root3.title("GT Library Management System")
 
 
-        #---top menu---#
-        self.root3.topframe = Frame(self.root3)
-        self.root3.topframe.pack()
+        #---menu---#
+        self.root3.left = Frame(self.root3,relief=GROOVE,bd=4,pady=2,padx=2) #creates a frame and grounds the frame inside the 'Homepage' window(self.root3)
+        self.root3.left.pack(side=LEFT) #builds it
 
-        Button(self.root3.topframe, text='Search Book', command=self.SearchBook).pack(side=LEFT)
-        Button(self.root3.topframe, text='Request Extension', command=self.RequestExtension).pack(side=LEFT)
-        Button(self.root3.topframe, text='Future Hold Request', command=self.FutureHoldRequest).pack(side=LEFT)
-        Button(self.root3.topframe, text='Track Book Location', command=self.TrackBookLocation).pack(side=LEFT)
-        Button(self.root3.topframe, text='Checkout', command=self.Checkout).pack(side=LEFT)
-        Button(self.root3.topframe, text='Return', command=self.Return).pack(side=LEFT)
+        self.root3.right = Frame(self.root3)
+        self.root3.right.pack(side=LEFT,anchor=N,expand=True,fill=BOTH)
 
-        #---bottom menu---#
-        self.root3.bottomframe = Frame(self.root3)
-        self.root3.bottomframe.pack()
+        self.root3.topright=Frame(self.root3.right,relief=GROOVE,bd=4,padx=2,pady=2,)
+        self.root3.topright.pack(expand=True,fill=X,anchor=N)
+        self.root3.bottomright=Frame(self.root3.right,relief=GROOVE,bd=4,padx=2,pady=2,)
+        self.root3.bottomright.pack(side=BOTTOM)
 
-        Button(self.root3.bottomframe, text='Search Bookd', command=self.Logout).pack(side=LEFT)
+        Label(self.root3.left,text='CHECK IN/OUT',bg='blue',fg='yellow',font='Helvetica 16').pack(expand=True,fill=X)
 
+        self.root3.one = Frame(self.root3.left)
+        self.root3.one.pack()
+        Button(self.root3.one, text= 'Return Book',width=20, command=self.switch38).pack(expand=True, fill=BOTH,side=LEFT)
+        Button(self.root3.one, text= 'Checkout',width=20, command=self.switch37).pack(expand=True, fill=BOTH,side=LEFT)
 
+        Label(self.root3.left,text='OPTIONS',bg='blue',fg='yellow',font='Helvetica 16').pack(expand=True,fill=X)
 
+        self.root3.two = Frame(self.root3.left)
+        self.root3.two.pack()
+        Button(self.root3.two, text= 'Request Book Extension',width=20, command=self.switch34).pack(expand=True, fill=BOTH,side=LEFT)
+        Button(self.root3.two, text= 'Track Book Location',width=20, command=self.switch38).pack(expand=True, fill=BOTH,side=LEFT)
 
+        self.root3.three = Frame(self.root3.left)
+        self.root3.three.pack()
+        Button(self.root3.three, text= 'Hold Request',width=20, command=self.switch310).pack(expand=True, fill=BOTH,side=LEFT)
+        Button(self.root3.three, text= 'Future Hold Request',width=20, command=self.switch35).pack(expand=True, fill=BOTH,side=LEFT)
 
+        self.root3.four = Frame(self.root3.left)
+        self.root3.four.pack()
+        Button(self.root3.four, text= 'Lost/Damaged Book',width=20, command=self.switch39).pack(expand=True, fill=BOTH,side=LEFT)
+        Button(self.root3.four, text= 'Edit Profile',width=20, command=self.switch311).pack(expand=True, fill=BOTH,side=LEFT)
 
-        frameA=Frame(self.root3)
-        frameA.pack(expand=True,fill=BOTH)
-        self.root3.reservedisplay=Entry(frameA, width=50, textvariable=self.currentreservation1, state='readonly')
-        self.root3.reservedisplay.pack(side=RIGHT)
-        Label(frameA,text='Current Reservations:').pack(side=RIGHT)
+        Label(self.root3.left,text='REPORTS',bg='blue',fg='yellow',font='Helvetica 16').pack(expand=True,fill=X)
 
-        # #only do this if there are 2 reservations
-        self.frameB=Frame(self.root3)
-        self.frameB.pack(expand=True,fill=BOTH)
-        # self.root3.reservedisplay2=Entry(frameB, width=50, textvariable=self.currentreservation2, state='readonly')
-        # self.root3.reservedisplay2.pack(side=RIGHT)
+        self.root3.five = Frame(self.root3.left)
+        self.root3.five.pack()
+        Button(self.root3.five, text= 'Popular Books',width=20, command=self.switch312).pack(expand=True, fill=BOTH,side=LEFT)
+        Button(self.root3.five, text= 'Frequent Users', width=20,command=self.switch313).pack(expand=True, fill=BOTH,side=LEFT)
 
-
-        frameC=Frame(self.root3)
-        frameC.pack(expand=True,fill=BOTH)
-        Label(frameC,text='Make New Reservations:').pack(side=LEFT)
-
-
-        ###----------START OF FRAMED BUTTONS--------####
-        frameD=Frame(self.root3)
-        frameD.pack(anchor=E)
-
-        #the 5 days
-        self.dayChoice=IntVar()
-        frameDay=Frame(frameD, relief=SUNKEN, bd=2)
-        frameDay.pack(side=LEFT,anchor=NE, padx=2)
-        Label(frameDay,text='Day Choices:').pack()
-        for item in self.day:
-            Radiobutton(frameDay,text=item, variable=self.dayChoice, value=self.day.index(item)).pack(anchor=W)
-        self.dayChoice.set(99)
-
-        #the 4 times
-        self.timeChoice=IntVar()
-        frameTime=Frame(frameD, relief=SUNKEN, bd=2)
-        frameTime.pack(side=LEFT,anchor=NE, padx=2)
-        Label(frameTime,text='Time Choices:').pack()
-        for item in self.time:
-            Radiobutton(frameTime,text=item, variable=self.timeChoice, value=self.time.index(item)).pack(anchor=W)
-        self.timeChoice.set(99)
-
-        #the 2 buildings
-        self.buildingChoice=IntVar()
-        frameBuilding=Frame(frameD, relief=SUNKEN, bd=2)
-        frameBuilding.pack(side=LEFT,anchor=NE, padx=2)
-        Label(frameBuilding,text='Building Choices:').pack()
-        for item in self.building:
-            Radiobutton(frameBuilding,text=item, variable=self.buildingChoice, value=self.building.index(item)).pack()
-        self.buildingChoice.set(99)
-
-        #the 4 floors
-        self.floorChoice=IntVar()
-        frameFloor=Frame(frameD, relief=SUNKEN, bd=2)
-        frameFloor.pack(side=LEFT,anchor=NE, padx=2)
-        Label(frameFloor,text='Floor Choices:').pack()
-        for i in range(1,5):
-            Radiobutton(frameFloor,text=str(i), variable=self.floorChoice, value=i).pack()
-        self.floorChoice.set(99)
-
-        #the 10 rooms
-        self.roomChoice=IntVar()
-        frameRoom=Frame(frameD, relief=SUNKEN, bd=2)
-        frameRoom.pack(side=LEFT,anchor=NE, padx=2)
-        frameRoomTop=Frame(frameRoom)
-        frameRoomTop.pack()
-        frameRoomBottom=Frame(frameRoom)
-        frameRoomBottom.pack()
-        Label(frameRoomTop,text='Room Choices:').pack()
-        for i in range(1,6):
-            Radiobutton(frameRoomBottom,text=str(i), variable=self.roomChoice, value=i).grid(column=0, row=i)
-
-        for i in range(6,11):
-            Radiobutton(frameRoomBottom,text=str(i), variable=self.roomChoice, value=i).grid(column=1, row=(i-5))
-
-        self.roomChoice.set(99)
+        self.root3.six = Frame(self.root3.left)
+        self.root3.six.pack(expand=True,fill=BOTH)
+        Button(self.root3.six, text= 'Damaged Books',width=20, command=self.switch314).pack(expand=True, fill=BOTH,side=LEFT)
+        Button(self.root3.six, text= 'Popular Subjects',width=20, command=self.switch315).pack(expand=True, fill=BOTH,side=LEFT)
 
 
 
-        self.root3.bottom = Frame(self.root3)
-        self.root3.bottom.pack(side=BOTTOM, expand=True, fill=BOTH)
-        Button(self.root3.bottom, text='Logout', command=self.Logout).pack(side=RIGHT)
-        Button(self.root3.bottom, text='Stats', command=self.stats).pack(side=RIGHT)
-        Button(self.root3.bottom, text='Check Available Options', command=self.availableReservations).pack(side=RIGHT)
-        Button(self.root3.bottom, text='Cancel All Reservations', command=self.cancelReservation).pack(side=RIGHT)
+        topone = Frame(self.root3.topright)
+        topone.pack(expand=True,fill=BOTH)
+        Label(topone,text='SEARCH FOR A BOOK',bg='blue',fg='yellow',font='Helvetica 16').pack(expand=True,fill=X)
+        self.getpublisher = Entry(topone, width=30, textvariable=self.publisher)
+        self.getpublisher.pack(side=RIGHT)
+        Label(topone,text="Publisher:").pack(side=RIGHT)
+        self.getisbn = Entry(topone, width=30, textvariable=self.isbn)
+        self.getisbn.pack(side=RIGHT)
+        Label(topone,text="ISBN:").pack(side=RIGHT)
 
-        self.displayReservations()
+        toptwo = Frame(self.root3.topright)
+        toptwo.pack(expand=True,fill=BOTH)
+        self.getedition = Entry(toptwo, width=30, textvariable=self.edition)
+        self.getedition.pack(side=RIGHT)
+        Label(toptwo,text="Edition:").pack(side=RIGHT)
+        Label(toptwo,text="Title:").pack(side=LEFT)
+        self.getedition = Entry(toptwo, width=30, textvariable=self.title)
+        self.getedition.pack(side=LEFT)
+
+
+        topthree = Frame(self.root3.topright)
+        topthree.pack(expand=True,fill=BOTH)
+        self.getauthor = Entry(topthree, width=30, textvariable=self.author)
+        self.getauthor.pack(side=RIGHT)
+        Label(topthree,text='Author').pack(side=RIGHT)
+
+        topfour = Frame(self.root3.topright)
+        topfour.pack(expand=True,fill=BOTH)
+        Button(topfour,text='Search',font='20',command=self.bookSearch).pack(expand=True,fill=BOTH)
+
+        bottomone = Frame(self.root3.bottomright)
+        bottomone.pack(expand=True,fill=BOTH,side=BOTTOM)
+        Button(bottomone,text='Close LMS',command=self.root.destroy).pack(side=RIGHT,expand=True,fill=BOTH)
+        Label(bottomone, image=self.image).pack(side=RIGHT)
+        Button(bottomone,text='Log Off',command=self.root.deiconify).pack(side=RIGHT,expand=True,fill=BOTH)
+
+
 
     def displayReservations(self):
         #get the number of reservations the user has already
@@ -407,9 +448,9 @@ class Gateway:
             self.root3.deiconify()
 
     def LoginCheck(self):
-        usrname = self.username.get()#get credentials from the login entries
-        passwrd = self.password.get()
-        self.currentuser = self.username.get()
+        usrname = 'john'#self.username.get()#get credentials from the login entries
+        passwrd = 'secret'#self.password.get()
+        self.currentuser = 'john'#self.username.get()
 
         #clear out credentials after retrieval
         self.clear()
@@ -459,23 +500,74 @@ class Gateway:
 
         c.close()
 
+    def createProfile(self):
+        print('made a profile')
+        self.root22.withdraw()
+        self.Homepage()
+
     def switch(self):
         self.clear()
         self.root.withdraw()
-        self.root2.deiconify()
+        self.root21.deiconify()
 
-    def switch2(self):
-        self.clear()
-        self.root2.withdraw()
+
+    def switch2122(self):
+        self.root21.withdraw()
+        self.root22.deiconify()
+
+    def switch22(self):
+        self.root22.withdraw()
         self.root.deiconify()
 
-    def switch3(self):
-        self.root4.destroy()
-        self.root3.deiconify()
+    #-------GUI Switches-------#
+    def switch34(self):
+        self.root3.withdraw()
+        self.root4.deiconify()
 
-    def switch4(self):
-        self.root5.destroy()
-        self.root3.deiconify()
+    def switch35(self):
+        self.root3.withdraw()
+        self.root5.deiconify()
+
+    def switch36(self):
+        self.root3.withdraw()
+        self.root6.deiconify()
+
+    def switch37(self):
+        self.root3.withdraw()
+        self.root7.deiconify()
+
+    def switch38(self):
+        self.root3.withdraw()
+        self.root8.deiconify()
+
+    def switch39(self):
+        self.root3.withdraw()
+        self.root9.deiconify()
+
+    def switch310(self):
+        self.root3.withdraw()
+        self.root10.deiconify()
+
+    def switch311(self):
+        self.root3.withdraw()
+        self.root11.deiconify()
+
+    def switch312(self):
+        self.root3.withdraw()
+        self.root12.deiconify()
+
+    def switch313(self):
+        self.root3.withdraw()
+        self.root13.deiconify()
+
+    def switch314(self):
+        self.root3.withdraw()
+        self.root14.deiconify()
+
+    def switch315(self):
+        self.root3.withdraw()
+        self.root15.deiconify()
+    #-------random functions------#
 
     def clear(self):
         self.lastname.set("")
@@ -493,57 +585,58 @@ class Gateway:
 
         #clear the form...
         self.clear()
+        valid = True
 
 
         #make sure username/password entries have values
-        if username=='' or password=='' or confirmpassword=='':
-            valid = False
-            messagebox.showerror("Missing items.", "You must specify a username, password, and confirm password. ")
-
-        else:
-            if len(username)>15:
-                valid=False
-                messagebox.showerror("Invalid Username","Username too long. Must be 15 characters or less.")
-            else:
-                #make sure password has one upper case letter and one number
-                if re.search('[A-Z]',password) and re.search('[A-Z]',password):
-                    #check to make sure passwords match
-                    if password != confirmpassword:
-                        valid = False
-                        messagebox.showerror("Password error", "Password and confirm password must match.")
-                    else:
-                        #check for a duplicate username in the database
-                        c=self.Connect()
-                        sql = "SELECT * FROM ReservationUser WHERE Username= %s"
-                        a= c.execute(sql,username)
-                        print(a)
-                        if a>0:
-                            valid=False
-                            messagebox.showerror("Username taken", "Please select another username...")
-                            # for item in c:
-                            #     print(username)
-                            #     print(item)
-                            #     if item[0]==username:
-                            #         valid = False
-                            #         messagebox.showerror("Username taken", "Please select another username...")
-                            # c.close()
-                else:
-                    valid = False
-                    messagebox.showerror("Password error", "Password must contain an uppercase letter and number")
+        # if username=='' or password=='' or confirmpassword=='':
+        #     valid = False
+        #     messagebox.showerror("Missing items.", "You must specify a username, password, and confirm password. ")
+        #
+        # else:
+        #     if len(username)>15:
+        #         valid=False
+        #         messagebox.showerror("Invalid Username","Username too long. Must be 15 characters or less.")
+        #     else:
+        #         #make sure password has one upper case letter and one number
+        #         if re.search('[A-Z]',password) and re.search('[A-Z]',password):
+        #             #check to make sure passwords match
+        #             if password != confirmpassword:
+        #                 valid = False
+        #                 messagebox.showerror("Password error", "Password and confirm password must match.")
+        #             else:
+        #                 #check for a duplicate username in the database
+        #                 c=self.Connect()
+        #                 sql = "SELECT * FROM ReservationUser WHERE Username= %s"
+        #                 a= c.execute(sql,username)
+        #                 print(a)
+        #                 if a>0:
+        #                     valid=False
+        #                     messagebox.showerror("Username taken", "Please select another username...")
+        #                     # for item in c:
+        #                     #     print(username)
+        #                     #     print(item)
+        #                     #     if item[0]==username:
+        #                     #         valid = False
+        #                     #         messagebox.showerror("Username taken", "Please select another username...")
+        #                     # c.close()
+        #         else:
+        #             valid = False
+        #             messagebox.showerror("Password error", "Password must contain an uppercase letter and number")
 
         #Insert info into database, remember .commit()
         if valid:
-            c = self.Connect()
-            sql = "INSERT INTO ReservationUser (lastname, username, password) VALUES (%s, %s, %s)"
-            c.execute(sql,(lastname, username, password))
-            self.db.commit()
-            c.close()
+            # c = self.Connect()
+            # sql = "INSERT INTO ReservationUser (lastname, username, password) VALUES (%s, %s, %s)"
+            # c.execute(sql,(lastname, username, password))
+            # self.db.commit()
+            # c.close()
 
             #confirm registration, hide reg window and present login window
             messagebox.showinfo("Success","You have successfully registered you may now log in.")
             self.clear()
-            self.root2.withdraw()
-            self.root.deiconify()
+            self.root21.withdraw()
+            self.root22.deiconify()
 
     def Connect(self):
         #this points to the connection object, this way we can get a cursor from db.cursor()
@@ -560,7 +653,9 @@ class Gateway:
             messagebox.showerror("No connection!", "Can't connect to the database. Please check the internet connection.(If you're not on GTwifi, is your VPN running?)")
             return None
 
-    
+    def bookSearch(self):
+        print('Search 4 books!')
+  
 
 win = Tk()
 app = Gateway(win)
