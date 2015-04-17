@@ -1,4 +1,8 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+>>>>>>> pr/7
 =======
 
 >>>>>>> pr/7
@@ -113,6 +117,7 @@ class Gateway:
         Button(framee,text="Cancel", command=self.switch2122).pack(side=RIGHT)
         self.root21.withdraw()
 <<<<<<< HEAD
+<<<<<<< HEAD
 
         #------Create Profile Page------#
         self.root22 = Toplevel()
@@ -165,6 +170,23 @@ class Gateway:
         frametr =Frame(framet)
         frametr.pack(side=RIGHT)
 
+=======
+
+        #------Create Profile Page------#
+        self.root22 = Toplevel()
+        self.root22.title('Create Profile')
+
+
+        L = Label(self.root22, image=self.image)
+        L.pack()
+        framet = Frame(self.root22)
+        framet.pack()
+        frametl = Frame(framet)
+        frametl.pack(side=RIGHT)
+        frametr =Frame(framet)
+        frametr.pack(side=RIGHT)
+
+>>>>>>> pr/7
         frametl1 = Frame(frametl)
         frametl1.pack(fill=BOTH, expand=True)
         self.regfirstname = Entry(frametl1, width=30, textvariable=self.lastname)
@@ -186,6 +208,9 @@ class Gateway:
         Label(frametl3,text="Email:").pack(side=RIGHT)
 
 
+<<<<<<< HEAD
+>>>>>>> pr/7
+=======
 >>>>>>> pr/7
         frametl4 = Frame(frametl)
         frametl4.pack(fill=BOTH, expand=True)
@@ -221,6 +246,7 @@ class Gateway:
         self.regdepartment.pack(side=RIGHT)
         Label(frametr4,text="Department:").pack(side=RIGHT)
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
         frametr5 = Frame(self.root22)
@@ -246,6 +272,9 @@ class Gateway:
         self.root3.title("GT Library Management System")
 =======
 
+=======
+
+>>>>>>> pr/7
 
         frametr5 = Frame(self.root22)
         frametr5.pack(expand=True,fill=BOTH)
@@ -256,6 +285,7 @@ class Gateway:
         self.root22.withdraw()
 
     def Homepage(self):
+<<<<<<< HEAD
 
         #---variables---#
         self.publisher=StringVar()
@@ -348,6 +378,97 @@ class Gateway:
         Button(topfour,text='Search',font='20',command=self.bookSearch).pack(expand=True,fill=BOTH)
 
 =======
+        self.root3 = Toplevel() #creates the 'Homepage' window.
+        self.root3.title("GT Library Management System")
+
+
+        #---menu---#
+        self.root3.left = Frame(self.root3,relief=GROOVE,bd=4,pady=2,padx=2) #creates a frame and grounds the frame inside the 'Homepage' window(self.root3)
+        self.root3.left.pack(side=LEFT,expand=True,fill=BOTH) #builds it
+
+        self.root3.right = Frame(self.root3)
+        self.root3.right.pack(side=LEFT,anchor=N,expand=True,fill=BOTH)
+
+        self.root3.topright=Frame(self.root3.right,relief=GROOVE,bd=4,padx=2,pady=2,)
+        self.root3.topright.pack(expand=True,fill=X,anchor=N)
+        self.root3.bottomright=Frame(self.root3.right,relief=GROOVE,bd=4,padx=2,pady=2,)
+        self.root3.bottomright.pack(side=BOTTOM,expand=True,fill=BOTH)
+
+        Label(self.root3.left,text='CHECK IN/OUT',bg='blue',fg='yellow',font='Helvetica 16').pack(expand=True,fill=X)
+
+        self.root3.one = Frame(self.root3.left)
+        self.root3.one.pack()
+        Button(self.root3.one, text= 'Return Book',width=20, command=self.switch38).pack(expand=True, fill=BOTH,side=LEFT)
+        Button(self.root3.one, text= 'Checkout',width=20, command=self.switch37).pack(expand=True, fill=BOTH,side=LEFT)
+
+        Label(self.root3.left,text='OPTIONS',bg='blue',fg='yellow',font='Helvetica 16').pack(expand=True,fill=X)
+
+        self.root3.two = Frame(self.root3.left)
+        self.root3.two.pack()
+        Button(self.root3.two, text= 'Request Book Extension',width=20, command=self.switch34).pack(expand=True, fill=BOTH,side=LEFT)
+        Button(self.root3.two, text= 'Track Book Location',width=20, command=self.switch36).pack(expand=True, fill=BOTH,side=LEFT)
+
+        self.root3.three = Frame(self.root3.left)
+        self.root3.three.pack()
+        Button(self.root3.three, text= 'Lost/Damaged Book',width=20, command=self.switch39).pack(expand=True, fill=BOTH,side=LEFT)
+        Button(self.root3.three, text= 'Future Hold Request',width=20, command=self.switch35).pack(expand=True, fill=BOTH,side=LEFT)
+
+        Label(self.root3.left,text='REPORTS',bg='blue',fg='yellow',font='Helvetica 16').pack(expand=True,fill=X)
+
+        self.root3.five = Frame(self.root3.left)
+        self.root3.five.pack()
+        Button(self.root3.five, text= 'Popular Books',width=20, command=self.switch312).pack(expand=True, fill=BOTH,side=LEFT)
+        Button(self.root3.five, text= 'Frequent Users', width=20,command=self.switch313).pack(expand=True, fill=BOTH,side=LEFT)
+
+        self.root3.six = Frame(self.root3.left)
+        self.root3.six.pack(expand=True,fill=BOTH)
+        Button(self.root3.six, text= 'Damaged Books',width=20, command=self.switch314).pack(expand=True, fill=BOTH,side=LEFT)
+        Button(self.root3.six, text= 'Popular Subjects',width=20, command=self.switch315).pack(expand=True, fill=BOTH,side=LEFT)
+
+
+
+        topone = Frame(self.root3.topright)
+        topone.pack(expand=True,fill=BOTH)
+        Label(topone,text='SEARCH FOR A BOOK',bg='blue',fg='yellow',font='Helvetica 16').pack(expand=True,fill=X)
+        self.getpublisher = Entry(topone, width=30, textvariable=self.publisher)
+        self.getpublisher.pack(side=RIGHT)
+        Label(topone,text="Publisher:").pack(side=RIGHT)
+        self.getisbn = Entry(topone, width=30, textvariable=self.isbn)
+        self.getisbn.pack(side=RIGHT)
+        Label(topone,text="ISBN:").pack(side=RIGHT)
+
+        toptwo = Frame(self.root3.topright)
+        toptwo.pack(expand=True,fill=BOTH)
+        self.getedition = Entry(toptwo, width=30, textvariable=self.edition)
+        self.getedition.pack(side=RIGHT)
+        Label(toptwo,text="Edition:").pack(side=RIGHT)
+        Label(toptwo,text="Title:").pack(side=LEFT)
+        self.getedition = Entry(toptwo, width=30, textvariable=self.title)
+        self.getedition.pack(side=LEFT)
+
+
+        topthree = Frame(self.root3.topright)
+        topthree.pack(expand=True,fill=BOTH)
+        self.getauthor = Entry(topthree, width=30, textvariable=self.author)
+        self.getauthor.pack(side=RIGHT)
+        Label(topthree,text='Author').pack(side=RIGHT)
+
+        topfour = Frame(self.root3.topright)
+        topfour.pack(expand=True,fill=BOTH)
+        Button(topfour,text='Search',font='20',command=self.bookSearch).pack(expand=True,fill=BOTH)
+
+>>>>>>> pr/7
+=======
+
+        #---variables---#
+        self.publisher=StringVar()
+        self.isbn=StringVar()
+        self.edition=StringVar()
+        self.title=StringVar()
+        self.author=StringVar()
+
+
+
         self.root3 = Toplevel() #creates the 'Homepage' window.
         self.root3.title("GT Library Management System")
 
@@ -668,6 +789,7 @@ class Gateway:
     #-------GUI Switches-------#
     def switch34(self):
 <<<<<<< HEAD
+<<<<<<< HEAD
         self.root3.withdraw()
         self.root4.deiconify()
 
@@ -712,6 +834,8 @@ class Gateway:
         self.root14.deiconify()
 
 =======
+=======
+>>>>>>> pr/7
         self.root4 = Toplevel()
         gui=self.root4
 
@@ -1042,6 +1166,9 @@ class Gateway:
         self.root3.withdraw()
         self.root14.deiconify()
 
+<<<<<<< HEAD
+>>>>>>> pr/7
+=======
 >>>>>>> pr/7
     def switch315(self):
         self.root3.withdraw()
@@ -1135,8 +1262,11 @@ class Gateway:
     def bookSearch(self):
         print('Search 4 books!')
 <<<<<<< HEAD
+<<<<<<< HEAD
   
 =======
+=======
+>>>>>>> pr/7
 
 
 
