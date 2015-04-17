@@ -14,15 +14,16 @@ class Gateway:
         self.root = root
         self.username = StringVar()
         self.password = StringVar()
-        self.lastname = StringVar()
         self.confirmpassword = StringVar()
         self.currentuser = ''
 
         #-----CreateProfileVariables-----#
         self.dob = StringVar()
+        self.dob.set('YYYY-MM-DD')
         self.email = StringVar()
         self.address = StringVar()
         self.lastname = StringVar()
+        self.firstname= StringVar()
         self.gender = StringVar()
         self.faculty = StringVar()
         self.department = StringVar()
@@ -127,7 +128,7 @@ class Gateway:
 
         frametl1 = Frame(frametl)
         frametl1.pack(fill=BOTH, expand=True)
-        self.regfirstname = Entry(frametl1, width=30, textvariable=self.lastname)
+        self.regfirstname = Entry(frametl1, width=30, textvariable=self.firstname)
         self.regfirstname.pack(side=RIGHT)
         Label(frametl1,text="First Name:").pack(side=RIGHT)
 
@@ -169,9 +170,9 @@ class Gateway:
 
         frametr3 = Frame(frametr)
         frametr3.pack(fill=BOTH, expand=True)
-        self.regfaculty = Entry(frametr3, width=30, textvariable=self.faculty)
-        self.regfaculty.pack(side=RIGHT)
-        Label(frametr3,text="Faculty:").pack(side=RIGHT)
+        Label(frametr3,text="       Faculty:").pack(side=LEFT)
+        Radiobutton(frametr3, text = "Yes", variable=self.faculty, value = "Y").pack(side=LEFT)
+        Radiobutton(frametr3, text = "No", variable=self.faculty, value = "N").pack(side=LEFT)
 
 
         frametr4 = Frame(frametr)
@@ -180,11 +181,56 @@ class Gateway:
         self.regdepartment.pack(side=RIGHT)
         Label(frametr4,text="Department:").pack(side=RIGHT)
 
+        def createProfile():
+            dob = self.dob.get()
+            email = self.email.get()
+            address = self.address.get()
+            username = self.username.get()
+            lastname = self.lastname.get()
+            firstname = self.firstname.get()
+            gender = self.gender.get()
+            faculty = self.faculty.get()
+            department = self.department.get()
+
+            if dob == '' or \
+                            email == '' or \
+                            address == '' or \
+                            lastname == '' or \
+                            firstname == '' or \
+                            gender == '' or \
+                            faculty == '':
+
+                valid = False
+                messagebox.showerror("Missing items.", "Please fill out all forms")
+
+            else:
+                if faculty == 'Y' and department == '':
+                    valid=False
+                    messagebox.showerror("Department is null","Since you are a faculty, please specify a department.")
+                else:
+                    valid = True
+            #Insert info into database, remember .commit()
+            if valid:
+                c = self.Connect()
+                sql = "INSERT INTO Student_Faculty (username, name, email, address, dob, gender, faculty, department) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                c.execute(sql,(username, firstname + " " + lastname, email, address, dob, gender, faculty, department))
+                self.db.commit()
+                c.close()
+
+                #confirm registration, hide reg window and present create profile window
+                messagebox.showinfo("Success","You have successfully created your profile, please log in.")
+                self.clear()
+                self.root22.withdraw()
+                self.root.deiconify()
 
         frametr5 = Frame(self.root22)
         frametr5.pack(expand=True,fill=BOTH)
-        Button(frametr5,text='Submit',command=self.createProfile).pack(side=RIGHT)
+        Button(frametr5,text='Submit',command=createProfile).pack(side=RIGHT)
         Button(frametr5,text='Cancel',command=self.switch22).pack(side=RIGHT)
+
+
+
+
 
 
         self.root22.withdraw()
@@ -502,10 +548,7 @@ class Gateway:
         self.root22.withdraw()
         self.Homepage()
 
-    def switch(self):
-        self.clear()
-        self.root.withdraw()
-        self.root21.deiconify()
+
 
 
     def switch2122(self):
@@ -990,68 +1033,57 @@ class Gateway:
         self.confirmpassword.set("")
 
     def RegisterNew(self):
+
         valid = True
         #get register entries and put them into database
-        lastname = self.lastname.get()
         username = self.username.get()
         password = self.password.get()
         confirmpassword = self.confirmpassword.get()
 
-        #clear the form...
-        self.clear()
-        valid = True
 
 
         #make sure username/password entries have values
-        # if username=='' or password=='' or confirmpassword=='':
-        #     valid = False
-        #     messagebox.showerror("Missing items.", "You must specify a username, password, and confirm password. ")
-        #
-        # else:
-        #     if len(username)>15:
-        #         valid=False
-        #         messagebox.showerror("Invalid Username","Username too long. Must be 15 characters or less.")
-        #     else:
-        #         #make sure password has one upper case letter and one number
-        #         if re.search('[A-Z]',password) and re.search('[A-Z]',password):
-        #             #check to make sure passwords match
-        #             if password != confirmpassword:
-        #                 valid = False
-        #                 messagebox.showerror("Password error", "Password and confirm password must match.")
-        #             else:
-        #                 #check for a duplicate username in the database
-        #                 c=self.Connect()
-        #                 sql = "SELECT * FROM ReservationUser WHERE Username= %s"
-        #                 a= c.execute(sql,username)
-        #                 print(a)
-        #                 if a>0:
-        #                     valid=False
-        #                     messagebox.showerror("Username taken", "Please select another username...")
-        #                     # for item in c:
-        #                     #     print(username)
-        #                     #     print(item)
-        #                     #     if item[0]==username:
-        #                     #         valid = False
-        #                     #         messagebox.showerror("Username taken", "Please select another username...")
-        #                     # c.close()
-        #         else:
-        #             valid = False
-        #             messagebox.showerror("Password error", "Password must contain an uppercase letter and number")
+        if username=='' or password=='' or confirmpassword=='':
+            valid = False
+            messagebox.showerror("Missing items.", "You must specify a username, password, and confirm password. ")
 
+        else:
+            if len(username)>30:
+                valid=False
+                messagebox.showerror("Invalid Username","Username too long. Must be 30 characters or less.")
+            else:
+                #make sure password has one upper case letter and one number
+                if True:
+                    #check to make sure passwords match
+                    if password != confirmpassword:
+                        valid = False
+                        messagebox.showerror("Password error", "Password and confirm password must match.")
+                    else:
+                        #check for a duplicate username in the database
+                        c=self.Connect()
+                        sql = "SELECT * FROM User WHERE Username= %s"
+                        a= c.execute(sql,username)
+                        if a>0:
+                            valid=False
+                            messagebox.showerror("Username taken", "Please select another username...")
         #Insert info into database, remember .commit()
         if valid:
-            # c = self.Connect()
-            # sql = "INSERT INTO ReservationUser (lastname, username, password) VALUES (%s, %s, %s)"
-            # c.execute(sql,(lastname, username, password))
-            # self.db.commit()
-            # c.close()
+            c = self.Connect()
+            sql = "INSERT INTO User (username, password) VALUES (%s, %s)"
+            c.execute(sql,(username, password))
+            self.db.commit()
+            c.close()
 
-            #confirm registration, hide reg window and present login window
-            messagebox.showinfo("Success","You have successfully registered you may now log in.")
-            self.clear()
+            #confirm registration, hide reg window and present create profile window
+            messagebox.showinfo("Success","You have successfully registered you must now create a profile.")
             self.root21.withdraw()
             self.root22.deiconify()
 
+
+    def switch(self):
+        self.clear()
+        self.root.withdraw()
+        self.root21.deiconify()
     def Connect(self):
         #this points to the connection object, this way we can get a cursor from db.cursor()
         try:
