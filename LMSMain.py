@@ -445,9 +445,9 @@ class Gateway:
             self.root3.deiconify()
 
     def LoginCheck(self):
-        usrname = 'john'#self.username.get()#get credentials from the login entries
-        passwrd = 'secret'#self.password.get()
-        self.currentuser = 'john'#self.username.get()
+        usrname = self.username.get()#get credentials from the login entries
+        passwrd = self.password.get()
+        self.currentuser = self.username.get()
 
         #clear out credentials after retrieval
         self.clear()
@@ -740,6 +740,11 @@ class Gateway:
         gui.damaged=StringVar()
         gui.userName=StringVar()
 
+        def query():
+            sql1='UPDATE Issues SET return_date=GETDATE() WHERE isbn=%s AND copynumber=%s AND username=%s'
+            sql2='UPDATE BookCopy SET is_checked_out=%s WHERE isbn=%s AND copy=%s'
+            
+
         gui.title('GT Library Management System')
         gui.header = Label(gui,text='RETURN BOOK',bg='blue',fg='yellow',font='Helvetica 16',width=60)
         gui.header.pack(expand=True,fill=X)
@@ -768,7 +773,7 @@ class Gateway:
         gui.frame4=Frame(gui,pady=5,padx=15)
         gui.frame4.pack(expand=True,fill=BOTH)
         gui.cancelbutton = Button(gui.frame4,text='Cancel',width=16,command=gui.destroy).pack(side=RIGHT)
-        gui.returnbutton = Button(gui.frame4,text='Return',width=16,command=print(gui.isbn.get())).pack(side=RIGHT)
+        gui.returnbutton = Button(gui.frame4,text='Return',width=16,command=print(gui.query())).pack(side=RIGHT)
 
 
     def switch39(self):
