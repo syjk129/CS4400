@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> pr/7
 from tkinter import *
 import re
 import urllib.request
@@ -108,6 +112,7 @@ class Gateway:
         Button(framee,text="Register", command=self.RegisterNew).pack(side=RIGHT)
         Button(framee,text="Cancel", command=self.switch2122).pack(side=RIGHT)
         self.root21.withdraw()
+<<<<<<< HEAD
 
         #------Create Profile Page------#
         self.root22 = Toplevel()
@@ -144,6 +149,44 @@ class Gateway:
         Label(frametl3,text="Email:").pack(side=RIGHT)
 
 
+=======
+
+        #------Create Profile Page------#
+        self.root22 = Toplevel()
+        self.root22.title('Create Profile')
+
+
+        L = Label(self.root22, image=self.image)
+        L.pack()
+        framet = Frame(self.root22)
+        framet.pack()
+        frametl = Frame(framet)
+        frametl.pack(side=RIGHT)
+        frametr =Frame(framet)
+        frametr.pack(side=RIGHT)
+
+        frametl1 = Frame(frametl)
+        frametl1.pack(fill=BOTH, expand=True)
+        self.regfirstname = Entry(frametl1, width=30, textvariable=self.lastname)
+        self.regfirstname.pack(side=RIGHT)
+        Label(frametl1,text="First Name:").pack(side=RIGHT)
+
+
+        frametl2 = Frame(frametl)
+        frametl2.pack(fill=BOTH, expand=True)
+        self.regdob = Entry(frametl2, width=30, textvariable=self.dob)
+        self.regdob.pack(side=RIGHT)
+        Label(frametl2,text="D.O.B:").pack(side=RIGHT)
+
+
+        frametl3 = Frame(frametl)
+        frametl3.pack(fill=BOTH, expand=True)
+        self.regemail = Entry(frametl3, width=30, textvariable=self.email)
+        self.regemail.pack(side=RIGHT)
+        Label(frametl3,text="Email:").pack(side=RIGHT)
+
+
+>>>>>>> pr/7
         frametl4 = Frame(frametl)
         frametl4.pack(fill=BOTH, expand=True)
         self.regaddress = Entry(frametl4, width=30, textvariable=self.address)
@@ -177,6 +220,7 @@ class Gateway:
         self.regdepartment = Entry(frametr4, width=30, textvariable=self.department)
         self.regdepartment.pack(side=RIGHT)
         Label(frametr4,text="Department:").pack(side=RIGHT)
+<<<<<<< HEAD
 
 
         frametr5 = Frame(self.root22)
@@ -200,12 +244,33 @@ class Gateway:
 
         self.root3 = Toplevel() #creates the 'Homepage' window.
         self.root3.title("GT Library Management System")
+=======
+
+
+        frametr5 = Frame(self.root22)
+        frametr5.pack(expand=True,fill=BOTH)
+        Button(frametr5,text='Submit',command=self.createProfile).pack(side=RIGHT)
+        Button(frametr5,text='Cancel',command=self.switch22).pack(side=RIGHT)
+
+
+        self.root22.withdraw()
+
+    def Homepage(self):
+
+        #---variables---#
+        self.publisher=StringVar()
+        self.isbn=StringVar()
+        self.edition=StringVar()
+        self.title=StringVar()
+        self.author=StringVar()
+>>>>>>> pr/7
 
 
         #---menu---#
         self.root3.left = Frame(self.root3,relief=GROOVE,bd=4,pady=2,padx=2) #creates a frame and grounds the frame inside the 'Homepage' window(self.root3)
         self.root3.left.pack(side=LEFT) #builds it
 
+<<<<<<< HEAD
         self.root3.right = Frame(self.root3)
         self.root3.right.pack(side=LEFT,anchor=N,expand=True,fill=BOTH)
 
@@ -282,6 +347,87 @@ class Gateway:
         topfour.pack(expand=True,fill=BOTH)
         Button(topfour,text='Search',font='20',command=self.bookSearch).pack(expand=True,fill=BOTH)
 
+=======
+        self.root3 = Toplevel() #creates the 'Homepage' window.
+        self.root3.title("GT Library Management System")
+
+
+        #---menu---#
+        self.root3.left = Frame(self.root3,relief=GROOVE,bd=4,pady=2,padx=2) #creates a frame and grounds the frame inside the 'Homepage' window(self.root3)
+        self.root3.left.pack(side=LEFT,expand=True,fill=BOTH) #builds it
+
+        self.root3.right = Frame(self.root3)
+        self.root3.right.pack(side=LEFT,anchor=N,expand=True,fill=BOTH)
+
+        self.root3.topright=Frame(self.root3.right,relief=GROOVE,bd=4,padx=2,pady=2,)
+        self.root3.topright.pack(expand=True,fill=X,anchor=N)
+        self.root3.bottomright=Frame(self.root3.right,relief=GROOVE,bd=4,padx=2,pady=2,)
+        self.root3.bottomright.pack(side=BOTTOM,expand=True,fill=BOTH)
+
+        Label(self.root3.left,text='CHECK IN/OUT',bg='blue',fg='yellow',font='Helvetica 16').pack(expand=True,fill=X)
+
+        self.root3.one = Frame(self.root3.left)
+        self.root3.one.pack()
+        Button(self.root3.one, text= 'Return Book',width=20, command=self.switch38).pack(expand=True, fill=BOTH,side=LEFT)
+        Button(self.root3.one, text= 'Checkout',width=20, command=self.switch37).pack(expand=True, fill=BOTH,side=LEFT)
+
+        Label(self.root3.left,text='OPTIONS',bg='blue',fg='yellow',font='Helvetica 16').pack(expand=True,fill=X)
+
+        self.root3.two = Frame(self.root3.left)
+        self.root3.two.pack()
+        Button(self.root3.two, text= 'Request Book Extension',width=20, command=self.switch34).pack(expand=True, fill=BOTH,side=LEFT)
+        Button(self.root3.two, text= 'Track Book Location',width=20, command=self.switch36).pack(expand=True, fill=BOTH,side=LEFT)
+
+        self.root3.three = Frame(self.root3.left)
+        self.root3.three.pack()
+        Button(self.root3.three, text= 'Lost/Damaged Book',width=20, command=self.switch39).pack(expand=True, fill=BOTH,side=LEFT)
+        Button(self.root3.three, text= 'Future Hold Request',width=20, command=self.switch35).pack(expand=True, fill=BOTH,side=LEFT)
+
+        Label(self.root3.left,text='REPORTS',bg='blue',fg='yellow',font='Helvetica 16').pack(expand=True,fill=X)
+
+        self.root3.five = Frame(self.root3.left)
+        self.root3.five.pack()
+        Button(self.root3.five, text= 'Popular Books',width=20, command=self.switch312).pack(expand=True, fill=BOTH,side=LEFT)
+        Button(self.root3.five, text= 'Frequent Users', width=20,command=self.switch313).pack(expand=True, fill=BOTH,side=LEFT)
+
+        self.root3.six = Frame(self.root3.left)
+        self.root3.six.pack(expand=True,fill=BOTH)
+        Button(self.root3.six, text= 'Damaged Books',width=20, command=self.switch314).pack(expand=True, fill=BOTH,side=LEFT)
+        Button(self.root3.six, text= 'Popular Subjects',width=20, command=self.switch315).pack(expand=True, fill=BOTH,side=LEFT)
+
+
+
+        topone = Frame(self.root3.topright)
+        topone.pack(expand=True,fill=BOTH)
+        Label(topone,text='SEARCH FOR A BOOK',bg='blue',fg='yellow',font='Helvetica 16').pack(expand=True,fill=X)
+        self.getpublisher = Entry(topone, width=30, textvariable=self.publisher)
+        self.getpublisher.pack(side=RIGHT)
+        Label(topone,text="Publisher:").pack(side=RIGHT)
+        self.getisbn = Entry(topone, width=30, textvariable=self.isbn)
+        self.getisbn.pack(side=RIGHT)
+        Label(topone,text="ISBN:").pack(side=RIGHT)
+
+        toptwo = Frame(self.root3.topright)
+        toptwo.pack(expand=True,fill=BOTH)
+        self.getedition = Entry(toptwo, width=30, textvariable=self.edition)
+        self.getedition.pack(side=RIGHT)
+        Label(toptwo,text="Edition:").pack(side=RIGHT)
+        Label(toptwo,text="Title:").pack(side=LEFT)
+        self.getedition = Entry(toptwo, width=30, textvariable=self.title)
+        self.getedition.pack(side=LEFT)
+
+
+        topthree = Frame(self.root3.topright)
+        topthree.pack(expand=True,fill=BOTH)
+        self.getauthor = Entry(topthree, width=30, textvariable=self.author)
+        self.getauthor.pack(side=RIGHT)
+        Label(topthree,text='Author').pack(side=RIGHT)
+
+        topfour = Frame(self.root3.topright)
+        topfour.pack(expand=True,fill=BOTH)
+        Button(topfour,text='Search',font='20',command=self.bookSearch).pack(expand=True,fill=BOTH)
+
+>>>>>>> pr/7
         bottomone = Frame(self.root3.bottomright)
         bottomone.pack(expand=True,fill=BOTH,side=BOTTOM)
         Button(bottomone,text='Close LMS',command=self.root.destroy).pack(side=RIGHT,expand=True,fill=BOTH)
@@ -521,6 +667,7 @@ class Gateway:
 
     #-------GUI Switches-------#
     def switch34(self):
+<<<<<<< HEAD
         self.root3.withdraw()
         self.root4.deiconify()
 
@@ -564,6 +711,338 @@ class Gateway:
         self.root3.withdraw()
         self.root14.deiconify()
 
+=======
+        self.root4 = Toplevel()
+        gui=self.root4
+
+        #--variables--#
+        gui.issueID = StringVar()
+        gui.originalcheckoutDate = StringVar()
+        gui.currentextensionDate=StringVar()
+        gui.currentreturnDate=StringVar()
+        gui.newextensionDate=StringVar()
+        gui.newestimatedreturnDate = StringVar()
+
+        gui.title('GT Library Management System')
+        gui.header = Label(gui,text='REQUEST EXTENSION ON A BOOK',bg='blue',fg='yellow',font='Helvetica 16',width=60)
+        gui.header.pack(expand=True,fill=X)
+
+        gui.frame1=Frame(gui,pady=20,padx=160)
+        gui.frame1.pack(expand=True,fill=BOTH)
+        gui.submitissueID = Button(gui.frame1,text='Submit',command=gui.issueID.get)
+        gui.submitissueID.pack(side=RIGHT)
+        gui.getissueID = Entry(gui.frame1,width=18, textvariable=gui.issueID)
+        gui.getissueID.pack(side=RIGHT)
+        gui.issueIDlabel = Label(gui.frame1,text="Enter your issue ID :")
+        gui.issueIDlabel.pack(side=RIGHT)
+
+
+        gui.line = Label(gui,bg='blue',width=60)
+        gui.line.pack(expand=True,fill=X)
+
+        gui.frame2=Frame(gui,pady=5,padx=15)
+        gui.frame2.pack(expand=True,fill=BOTH)
+        gui.originalcheckoutDatelabel = Label(gui.frame2,text="Original Checkout Date :")
+        gui.originalcheckoutDatelabel.pack(side=LEFT)
+        gui.getoriginalcheckoutDate = Entry(gui.frame2,width=18, textvariable=gui.originalcheckoutDate)
+        gui.getoriginalcheckoutDate.pack(side=LEFT)
+
+        gui.frame3=Frame(gui,pady=5,padx=15)
+        gui.frame3.pack(expand=True,fill=BOTH)
+        gui.getcurrentreturnDate = Entry(gui.frame3, width=18, textvariable=gui.currentreturnDate)
+        gui.getcurrentreturnDate.pack(side=RIGHT)
+        gui.currentreturnDatelabel = Label(gui.frame3,text="Current Return Date :")
+        gui.currentreturnDatelabel.pack(side=RIGHT)
+        gui.currentextensionDatelabel = Label(gui.frame3,text="Current Extension Date :")
+        gui.currentextensionDatelabel.pack(side=LEFT)
+        gui.getcurrentextensionDate = Entry(gui.frame3, width=18, textvariable=gui.currentextensionDate)
+        gui.getcurrentextensionDate.pack(side=LEFT)
+
+        gui.frame4=Frame(gui,pady=5,padx=15)
+        gui.frame4.pack(expand=True,fill=BOTH)
+        gui.getnewestimatedreturnDate = Entry(gui.frame4, width=13, textvariable=gui.newestimatedreturnDate)
+        gui.getnewestimatedreturnDate.pack(side=RIGHT)
+        gui.newestimatedreturnDatelabel = Label(gui.frame4,text="New Estimated Return Date :")
+        gui.newestimatedreturnDatelabel.pack(side=RIGHT)
+        gui.getnewextensionDate = Entry(gui.frame4, width=18, textvariable=gui.newextensionDate)
+        gui.getnewextensionDate.pack(side=RIGHT)
+        gui.newextensionDatelabel = Label(gui.frame4,text="New Extension Date :")
+        gui.newextensionDatelabel.pack(side=RIGHT)
+
+
+        gui.frame4=Frame(gui,pady=5,padx=15)
+        gui.frame4.pack(expand=True,fill=BOTH)
+        gui.cancelbutton = Button(gui.frame4,text='Cancel',width=16,command=gui.destroy)
+        gui.cancelbutton.pack(side=RIGHT)
+        gui.submitbutton = Button(gui.frame4,text='Submit',width=16,command=print(gui.issueID.get()))
+        gui.submitbutton.pack(side=RIGHT)
+
+    def switch35(self):
+        self.root5 = Toplevel()
+        gui=self.root5
+
+        #--variables--#
+        gui.isbn = StringVar()
+        gui.copyNumber = StringVar()
+        gui.expectedAvailableDate=StringVar()
+
+        gui.title('GT Library Management System')
+        gui.header = Label(gui,text='FUTURE HOLD REQUEST FOR A BOOK',bg='blue',fg='yellow',font='Helvetica 16',width=60)
+        gui.header.pack(expand=True,fill=X)
+
+        gui.frame1=Frame(gui,pady=15,padx=160)
+        gui.frame1.pack(expand=True,fill=BOTH)
+        gui.locateIsbn = Button(gui.frame1,text='Request',command=gui.isbn.get)
+        gui.locateIsbn.pack(side=RIGHT)
+        gui.getIsbn = Entry(gui.frame1,width=18, textvariable=gui.isbn)
+        gui.getIsbn.pack(side=RIGHT)
+        gui.isbnLabel = Label(gui.frame1,text="ISBN :")
+        gui.isbnLabel.pack(side=RIGHT)
+
+
+        gui.line = Label(gui,bg='blue',width=60)
+        gui.line.pack(expand=True,fill=X)
+
+        gui.frame2=Frame(gui,pady=5,padx=15)
+        gui.frame2.pack(expand=True,fill=BOTH)
+        gui.getcopyNumber = Entry(gui.frame2,width=18,state='readonly',readonlybackground='grey', textvariable=gui.copyNumber)
+        gui.getcopyNumber.pack(side=RIGHT)
+        gui.copyNumberlabel = Label(gui.frame2,text="Copy Number :")
+        gui.copyNumberlabel.pack(side=RIGHT)
+        gui.getexpectedAvailableDate = Entry(gui.frame2, width=18,state='readonly',readonlybackground='grey', textvariable=gui.expectedAvailableDate)
+        gui.getexpectedAvailableDate.pack(side=RIGHT)
+        gui.expectedAvailableDatelabel = Label(gui.frame2,text="Expected Available Date :")
+        gui.expectedAvailableDatelabel.pack(side=RIGHT)
+
+        gui.frame3=Frame(gui,pady=5,padx=15)
+        gui.frame3.pack(expand=True,fill=BOTH)
+        gui.confirmbutton = Button(gui.frame3,text='Confirm',width=16,command=gui.destroy)
+        gui.confirmbutton.pack(side=RIGHT)
+        gui.cancelbutton = Button(gui.frame3,text='Cancel',width=16,command=gui.destroy)
+        gui.cancelbutton.pack(side=RIGHT)
+
+    def switch36(self):
+        self.root6 = Toplevel()
+        gui=self.root6
+
+        #--variables--#
+        gui.isbn = StringVar()
+        gui.floorNumber = StringVar()
+        gui.shelfNumber=StringVar()
+        gui.aisleNumber=StringVar()
+        gui.subject=StringVar()
+
+        gui.title('GT Library Management System')
+        gui.header = Label(gui,text='TRACK BOOK LOCATION',bg='blue',fg='yellow',font='Helvetica 16',width=60)
+        gui.header.pack(expand=True,fill=X)
+
+        gui.frame1=Frame(gui,pady=15,padx=160)
+        gui.frame1.pack(expand=True,fill=BOTH)
+        gui.locateIsbn = Button(gui.frame1,text='Locate',command=gui.isbn.get)
+        gui.locateIsbn.pack(side=RIGHT)
+        gui.getIsbn = Entry(gui.frame1,width=18, textvariable=gui.isbn)
+        gui.getIsbn.pack(side=RIGHT)
+        gui.isbnLabel = Label(gui.frame1,text="ISBN :")
+        gui.isbnLabel.pack(side=RIGHT)
+
+
+        gui.line = Label(gui,bg='blue',width=60)
+        gui.line.pack(expand=True,fill=X)
+
+        gui.frame2=Frame(gui,pady=5,padx=15)
+        gui.frame2.pack(expand=True,fill=BOTH)
+        gui.floorNumberlabel = Label(gui.frame2,text="Floor Number :")
+        gui.floorNumberlabel.pack(side=LEFT)
+        gui.getfloorNumber = Entry(gui.frame2,width=18, textvariable=gui.floorNumber)
+        gui.getfloorNumber.pack(side=LEFT)
+        gui.getshelfNumber = Entry(gui.frame2, width=18, textvariable=gui.shelfNumber)
+        gui.getshelfNumber.pack(side=RIGHT)
+        gui.shelfNumberlabel = Label(gui.frame2,text="Shelf Number :")
+        gui.shelfNumberlabel.pack(side=RIGHT)
+
+
+        gui.frame3=Frame(gui,pady=5,padx=15)
+        gui.frame3.pack(expand=True,fill=BOTH)
+        gui.getSubject = Entry(gui.frame3, width=18, textvariable=gui.subject)
+        gui.getSubject.pack(side=RIGHT)
+        gui.subjectlabel = Label(gui.frame3,text="Subject :")
+        gui.subjectlabel.pack(side=RIGHT)
+        gui.aisleNumberlabel = Label(gui.frame3,text="Aisle Number :")
+        gui.aisleNumberlabel.pack(side=LEFT)
+        gui.getaisleNumber = Entry(gui.frame3, width=18, textvariable=gui.aisleNumber)
+        gui.getaisleNumber.pack(side=LEFT)
+
+
+
+        gui.frame4=Frame(gui,pady=5,padx=15)
+        gui.frame4.pack(expand=True,fill=BOTH)
+        gui.cancelbutton = Button(gui.frame4,text='Cancel/Back',width=16,command=gui.destroy)
+        gui.cancelbutton.pack(side=RIGHT)
+
+    def switch37(self):
+        self.root7 = Toplevel()
+        gui=self.root7
+
+        #--variables--#
+        gui.isbn = StringVar()
+        gui.copyNumber = StringVar()
+        gui.userName=StringVar()
+        gui.checkoutDate=StringVar()
+        gui.estimatedreturnDate=StringVar()
+
+        gui.title('GT Library Management System')
+        gui.header = Label(gui,text='Book Checkout',bg='blue',fg='yellow',font='Helvetica 16',width=60)
+        gui.header.pack(expand=True,fill=X)
+
+        gui.frame1=Frame(gui,pady=5,padx=15)
+        gui.frame1.pack(expand=True,fill=BOTH)
+        gui.getcopyNumber = Entry(gui.frame1, width=15, textvariable=gui.copyNumber)
+        gui.getcopyNumber.pack(side=RIGHT)
+        gui.copynumberlabel = Label(gui.frame1,text="Copy Number :").pack(side=RIGHT)
+        gui.isbnlabel = Label(gui.frame1,text="            ISBN :").pack(side=LEFT)
+        gui.getisbn = Entry(gui.frame1, width=20, textvariable=gui.isbn)
+        gui.getisbn.pack(side=LEFT)
+
+
+        gui.frame2=Frame(gui,pady=5,padx=15)
+        gui.frame2.pack(expand=True,fill=BOTH)
+        gui.getuserName = Entry(gui.frame2, width=15, textvariable=gui.userName)
+        gui.getuserName.pack(side=RIGHT)
+        gui.usernamelabel = Label(gui.frame2,text="Username :").pack(side=RIGHT)
+
+        gui.frame3=Frame(gui,pady=5,padx=15)
+        gui.frame3.pack(expand=True,fill=BOTH)
+        gui.getestimatedreturnDate = Entry(gui.frame3, width=15, textvariable=gui.checkoutDate)
+        gui.getestimatedreturnDate.pack(side=RIGHT)
+        gui.estimatedreturnDatelabel = Label(gui.frame3,text="        Estimated Return Date :").pack(side=RIGHT)
+        gui.checkoutDate = Label(gui.frame3,text="Checkout Date :").pack(side=LEFT)
+        gui.getcheckoutDate = Entry(gui.frame3, width=20, textvariable=gui.checkoutDate)
+        gui.getcheckoutDate.pack(side=LEFT)
+
+        gui.frame4=Frame(gui,pady=5,padx=15)
+        gui.frame4.pack(expand=True,fill=BOTH)
+        gui.cancelbutton = Button(gui.frame4,text='Cancel',width=16,command=gui.destroy).pack(side=RIGHT)
+        gui.returnbutton = Button(gui.frame4,text='Checkout',width=16,command=print(gui.isbn.get())).pack(side=RIGHT)
+
+    def switch38(self):
+        self.root8 = Toplevel()
+        gui=self.root8
+
+        #--variables--#
+        gui.isbn = StringVar()
+        gui.copyNumber = StringVar()
+        gui.damaged=StringVar()
+        gui.userName=StringVar()
+
+        gui.title('GT Library Management System')
+        gui.header = Label(gui,text='RETURN BOOK',bg='blue',fg='yellow',font='Helvetica 16',width=60)
+        gui.header.pack(expand=True,fill=X)
+
+        gui.frame1=Frame(gui,pady=5,padx=15)
+        gui.frame1.pack(expand=True,fill=BOTH)
+        gui.getcopyNumber = Entry(gui.frame1, width=15, textvariable=gui.copyNumber)
+        gui.getcopyNumber.pack(side=RIGHT)
+        gui.copynumberlabel = Label(gui.frame1,text="Copy Number :").pack(side=RIGHT)
+        gui.isbnlabel = Label(gui.frame1,text="ISBN :").pack(side=LEFT)
+        gui.getisbn = Entry(gui.frame1, width=20, textvariable=gui.isbn)
+        gui.getisbn.pack(side=LEFT)
+
+        gui.frame2=Frame(gui,pady=5,padx=15)
+        gui.frame2.pack(expand=True,fill=BOTH)
+        gui.getdamaged = Entry(gui.frame2, width=15, textvariable=gui.damaged)
+        gui.getdamaged.pack(side=RIGHT)
+        gui.damagedlabel = Label(gui.frame2,text="Damaged ? :").pack(side=RIGHT)
+
+        gui.frame3=Frame(gui,pady=5,padx=15)
+        gui.frame3.pack(expand=True,fill=BOTH)
+        gui.getuserName = Entry(gui.frame3, width=15, textvariable=gui.userName)
+        gui.getuserName.pack(side=RIGHT)
+        gui.usernamelabel = Label(gui.frame3,text="Username :").pack(side=RIGHT)
+
+        gui.frame4=Frame(gui,pady=5,padx=15)
+        gui.frame4.pack(expand=True,fill=BOTH)
+        gui.cancelbutton = Button(gui.frame4,text='Cancel',width=16,command=gui.destroy).pack(side=RIGHT)
+        gui.returnbutton = Button(gui.frame4,text='Return',width=16,command=print(gui.isbn.get())).pack(side=RIGHT)
+
+
+    def switch39(self):
+        self.root9 = Toplevel()
+        gui=self.root9
+
+        #--variables--#
+        gui.isbn = StringVar()
+        gui.copyNumber = StringVar()
+        gui.currentTime=StringVar()
+        gui.lastUser = StringVar()
+        gui.amount = StringVar()
+
+        gui.title('GT Library Management System')
+        gui.header = Label(gui,text='LOST/DAMAGED BOOK',bg='blue',fg='yellow',font='Helvetica 16',width=60)
+        gui.header.pack(expand=True,fill=X)
+
+        gui.frame1=Frame(gui,pady=15,padx=15)
+        gui.frame1.pack(expand=True,fill=BOTH)
+
+        gui.getcopyNumber = Entry(gui.frame1,width=10, textvariable=gui.copyNumber)
+        gui.getcopyNumber.pack(side=RIGHT)
+        gui.copyNumberlabel = Label(gui.frame1,text="    Copy Number :")
+        gui.copyNumberlabel.pack(side=RIGHT)
+        gui.getIsbn = Entry(gui.frame1,width=18, textvariable=gui.isbn)
+        gui.getIsbn.pack(side=RIGHT)
+        gui.isbnLabel = Label(gui.frame1,text="ISBN :")
+        gui.isbnLabel.pack(side=RIGHT)
+
+        gui.frame2=Frame(gui,padx=15)
+        gui.frame2.pack(expand=True,fill=BOTH)
+        gui.isbnLabel = Label(gui.frame2,text='      Current Time :')
+        gui.isbnLabel.pack(side=LEFT)
+        gui.getcurrentTime = Entry(gui.frame2,width=18, textvariable=gui.currentTime,state='readonly',readonlybackground='grey')
+        gui.getcurrentTime.pack(side=LEFT)
+
+        gui.frame3=Frame(gui,pady=15)
+        gui.frame3.pack()
+        gui.lastUserButton = Button(gui.frame3,text='Get Last User',command=gui.lastUser.get)
+        gui.lastUserButton.pack()
+
+
+        gui.line = Label(gui,bg='blue',width=60)
+        gui.line.pack(expand=True,fill=X)
+
+        gui.frame4=Frame(gui,pady=5,padx=15)
+        gui.frame4.pack(expand=True,fill=BOTH)
+        gui.getlastUserlabel = Label(gui.frame4,text="  Last User of the Book :")
+        gui.getlastUserlabel.pack(side=LEFT)
+        gui.getlastUser = Entry(gui.frame4, width=18,state='readonly',readonlybackground='grey', textvariable=gui.lastUser)
+        gui.getlastUser.pack(side=LEFT)
+
+        gui.frame5=Frame(gui,pady=5,padx=15)
+        gui.frame5.pack(expand=True,fill=BOTH)
+        gui.getamountlabel = Label(gui.frame5,text="Amount to be charged :")
+        gui.getamountlabel.pack(side=LEFT)
+        gui.getamount = Entry(gui.frame5, width=18, textvariable=gui.amount)
+        gui.getamount.pack(side=LEFT)
+
+        gui.frame6=Frame(gui,pady=5,padx=15)
+        gui.frame6.pack(expand=True,fill=BOTH)
+        gui.submitbutton = Button(gui.frame6,text='Submit',width=16,command=gui.destroy)
+        gui.submitbutton.pack(side=RIGHT)
+        gui.cancelbutton = Button(gui.frame6,text='Cancel',width=16,command=gui.destroy)
+        gui.cancelbutton.pack(side=RIGHT)
+
+
+    def switch312(self):
+        self.root3.withdraw()
+        self.root12.deiconify()
+
+    def switch313(self):
+        self.root3.withdraw()
+        self.root13.deiconify()
+
+    def switch314(self):
+        self.root3.withdraw()
+        self.root14.deiconify()
+
+>>>>>>> pr/7
     def switch315(self):
         self.root3.withdraw()
         self.root15.deiconify()
@@ -655,7 +1134,14 @@ class Gateway:
 
     def bookSearch(self):
         print('Search 4 books!')
+<<<<<<< HEAD
   
+=======
+
+
+
+    
+>>>>>>> pr/7
 
 win = Tk()
 app = Gateway(win)
