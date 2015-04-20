@@ -1,5 +1,5 @@
 
-from Tkinter import *
+from tkinter import *
 import re
 import urllib.request
 import base64
