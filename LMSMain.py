@@ -1,11 +1,12 @@
 
-
 from tkinter import *
 import re
 import urllib.request
 import base64
 import pymysql
 from tkinter import messagebox
+import datetime as clock
+
 
 class Gateway:
     def __init__(self, root):
@@ -164,22 +165,27 @@ class Gateway:
 
         frametr2 = Frame(frametr)
         frametr2.pack(fill=BOTH, expand=True)
-        self.reggender = Entry(frametr2, width=30, textvariable=self.gender)
-        self.reggender.pack(side=RIGHT)
-        Label(frametr2,text="Gender:").pack(side=RIGHT)
+        Radiobutton(frametr2, text='MALE', variable=self.gender,value='M').pack(side=RIGHT)
+        Radiobutton(frametr2, text='FEMALE', variable=self.gender,value='F').pack(side=RIGHT)
+        Label(frametr2,text="    Gender:").pack(side=RIGHT)
 
         frametr3 = Frame(frametr)
         frametr3.pack(fill=BOTH, expand=True)
-        Label(frametr3,text="       Faculty:").pack(side=LEFT)
-        Radiobutton(frametr3, text = "Yes", variable=self.faculty, value = "Y").pack(side=LEFT)
-        Radiobutton(frametr3, text = "No", variable=self.faculty, value = "N").pack(side=LEFT)
+        Radiobutton(frametr3, text = "Yes", variable=self.faculty, value = "Y").pack(side=RIGHT)
+        Radiobutton(frametr3, text = "No", variable=self.faculty, value = "N").pack(side=RIGHT)
+        Label(frametr3,text="       Faculty:").pack(side=RIGHT)
+
 
 
         frametr4 = Frame(frametr)
         frametr4.pack(fill=BOTH, expand=True)
-        self.regdepartment = Entry(frametr4, width=30, textvariable=self.department)
-        self.regdepartment.pack(side=RIGHT)
+        self.department.set("") # default value
+        self.regdepartment= OptionMenu(frametr4, self.department,"","CS","Chem","Math","Engineering","Physics")
+        self.regdepartment.pack(side=RIGHT,expand=True,fill=BOTH)
         Label(frametr4,text="Department:").pack(side=RIGHT)
+
+
+
 
         def createProfile():
             dob = self.dob.get()
@@ -209,6 +215,11 @@ class Gateway:
                     messagebox.showerror("Department is null","Since you are a faculty, please specify a department.")
                 else:
                     valid = True
+
+            if len(re.findall('([0-9]{4}-[01][0-9]-[0123][0-9])',dob))!=1:
+                valid=False
+                messagebox.showerror("Invalid Date","Date of birth must be formatted as YYYY-MM-DD.")
+
             #Insert info into database, remember .commit()
             if valid:
                 c = self.Connect()
@@ -223,32 +234,24 @@ class Gateway:
                 self.root22.withdraw()
                 self.root.deiconify()
 
+
+
         frametr5 = Frame(self.root22)
         frametr5.pack(expand=True,fill=BOTH)
         Button(frametr5,text='Submit',command=createProfile).pack(side=RIGHT)
         Button(frametr5,text='Cancel',command=self.switch22).pack(side=RIGHT)
-
-
-
-
-
 
         self.root22.withdraw()
 
     def Homepage(self):
 
         #---variables---#
-        self.publisher=StringVar()
         self.isbn=StringVar()
-        self.edition=StringVar()
         self.title=StringVar()
         self.author=StringVar()
 
-
-
         self.root3 = Toplevel() #creates the 'Homepage' window.
         self.root3.title("GT Library Management System")
-
 
         #---menu---#
         self.root3.left = Frame(self.root3,relief=GROOVE,bd=4,pady=2,padx=2) #creates a frame and grounds the frame inside the 'Homepage' window(self.root3)
@@ -293,68 +296,212 @@ class Gateway:
         Button(self.root3.six, text= 'Damaged Books',width=20, command=self.switch314).pack(expand=True, fill=BOTH,side=LEFT)
         Button(self.root3.six, text= 'Popular Subjects',width=20, command=self.switch315).pack(expand=True, fill=BOTH,side=LEFT)
 
+        ##--------------[        SEARCH           ]---------------##
+        ##-------------[           BOX           ]----------------##
+
+        self.searchField=StringVar()
+        self.searchField.set('')
+        self.searchValue=StringVar()
+        self.searchValue.set('')
+
+        def bookSearch():
+            field = self.searchField.get()
+            value = self.searchValue.get()
+
+            if field !='':
+                if value !='':
+                    c = self.Connect()
+
+                    ##------[ GET (isbn, title, edition, is_book_on_reserve) of every book that matches the search parameters ]-----##
+                    sql="SELECT DISTINCT  isbn, title, edition, is_book_on_reserve FROM Book NATURAL JOIN Authors WHERE "+field+" LIKE %s"
+                    c.execute(sql, ("%" + value + "%",))
+
+                    books = c.fetchall()
+                    self.db.commit()
+                    c.close()
+
+                    if len(books)==0:
+                        messagebox.showinfo('No Results', 'Your search returned no results, please try again.')
+                    else:
+
+                        ##-----[ Check Availability for the books, Pack those results in a tuple of tuples for displaying ]-----##
+                        self.allresults = []
+                        for book in books:
+                            c=self.Connect()
+                            sql = 'SELECT COUNT(*) FROM BookCopy NATURAL JOIN Book WHERE isbn = %s AND is_on_hold = %s AND is_checked_out = %s AND is_damaged = %s'
+                            c.execute(sql,(str(book[0]),'N','N','0'))
+                            self.db.commit()
+                            copies_available=c.fetchone()
+                            c.close()
+                            self.allresults.append((book[0],book[1],book[2],book[3],copies_available[0]))
+
+                        ##----[build the gui to display hold results]----##
+                        self.rootsearchresults = Toplevel()
+                        gui=self.rootsearchresults
+
+                        #--variables--#
+                        gui.sql =self.allresults
+                        gui.selection = StringVar()
+
+                        def placehold():
+
+                            #--data grab--#
+                            sql ="SELECT copy_num FROM BookCopy NATURAL JOIN Book WHERE isbn = %s AND is_on_hold = 'N' AND is_checked_out = 'N' AND is_damaged = '0' AND is_book_on_reserve = 'N' LIMIT 1;"
+                            c = self.Connect()
+                            print('gui.selection.get()= '+gui.selection.get())
+                            c.execute(sql,(gui.selection.get()))
+                            gui.copynum = c.fetchone()
+                            gui.copynum = gui.copynum[0]
+                            print(gui.copynum)
+
+                            sql="UPDATE BookCopy SET is_on_hold = 'Y' WHERE isbn = %s AND copy_num = %s LIMIT 1;"
+                            c.execute(sql,(gui.selection.get(),gui.copynum))
+                            self.db.commit()
+
+                            sql="INSERT INTO Issues ( username, isbn, copy_num, date_of_issue, return_date) VALUES (%s,%s, %s, %s, %s)"
+
+                            c.execute(sql,(self.username.get(),gui.selection.get(),gui.copynum, gui.holddate.get(),gui.returndate.get()))
+                            self.db.commit()
+
+                            sql="SELECT issue_id FROM Issues WHERE username = %s AND isbn = %s AND copy_num=%s AND date_of_issue = %s"
+                            c.execute(sql,(self.username.get(),gui.selection.get(),gui.copynum, gui.holddate.get()))
+                            gui.id = c.fetchone()
+                            gui.id = gui.id[0]
+                            c.close()
+
+                            messagebox.showinfo("Hold Placed!","You have successfully placed a hold on your book. Please record your issues ID for future use: "+str(gui.id))
+
+                            gui.destroy()
+
+
+
+
+
+
+                        gui.title('GT Library Management System')
+                        gui.header = Label(gui,text='HOLD REQUEST FOR A BOOK',bg='blue',fg='yellow',font='Helvetica 16',width=60)
+                        gui.header.pack(expand=True,fill=X)
+
+                        gui.topframe=Frame(gui,pady=15,padx=15,bd=2,relief=FLAT)
+                        gui.topframe.pack(expand=True,fill=BOTH)
+
+                        gui.bottomframe=Frame(gui,pady=15,padx=15,bd=2,relief=FLAT)
+                        gui.bottomframe.pack(expand=True,fill=BOTH)
+
+
+
+                        gui.topheader = Frame(gui.topframe)
+                        gui.topheader.pack()
+                        gui.headerselect=Label(gui.topheader,width=5,text='SELECT',justify=CENTER,bg='grey',relief=SUNKEN)
+                        gui.headerselect.pack(side=LEFT)
+                        gui.headerisbn=Label(gui.topheader,width=18,text='ISBN',justify=CENTER,bg='grey',relief=SUNKEN)
+                        gui.headerisbn.pack(side=LEFT)
+                        gui.headertitle=Label(gui.topheader,width=30,text='TITLE',justify=CENTER,bg='grey',relief=SUNKEN)
+                        gui.headertitle.pack(side=LEFT)
+                        gui.headeredition=Label(gui.topheader,width=10,text='EDITION',justify=CENTER,bg='grey',relief=SUNKEN)
+                        gui.headeredition.pack(side=LEFT)
+                        gui.headercopiesavailable=Label(gui.topheader,width=10,text='# AVAILABLE',justify=CENTER,bg='grey',relief=SUNKEN)
+                        gui.headercopiesavailable.pack(side=LEFT)
+
+                        created=False;
+
+                        for item in gui.sql:
+
+
+
+                            if item[3]=='N':
+                                gui.frame=Frame(gui.topframe)
+                                gui.frame.pack()
+                                Radiobutton(gui.frame,value = item[0],anchor=E,variable=gui.selection,padx=10).pack(side=LEFT,expand=True,fill=Y)
+                                Label(gui.frame,width=18,text=str(item[0]),justify=CENTER,relief=SUNKEN).pack(side=LEFT,expand=True,fill=Y)
+                                Label(gui.frame,width=30,text=str(item[1]),justify=CENTER,wraplength=250,relief=SUNKEN).pack(side=LEFT)
+                                Label(gui.frame,width=10,text=str(item[2]),justify=CENTER,relief=SUNKEN).pack(side=LEFT,expand=True,fill=Y)
+                                Label(gui.frame,width=10,text=str(item[4]),justify=CENTER,relief=SUNKEN).pack(side=LEFT,expand=True,fill=Y)
+                            else:
+                                if created==False:
+                                    gui.bottomheader = Frame(gui.bottomframe)
+                                    gui.bottomheader.pack()
+                                    Label(gui.bottomheader,text='BOOKS ON RESERVE',bg='blue',fg='yellow',font='Helvetica 16',width=60).pack(expand=True,fill=X)
+                                    Label(gui.bottomheader,width=18,text='ISBN',justify=CENTER,bg='grey',relief=SUNKEN).pack(side=LEFT)
+                                    Label(gui.bottomheader,width=30,text='TITLE',justify=CENTER,bg='grey',relief=SUNKEN).pack(side=LEFT)
+                                    Label(gui.bottomheader,width=10,text='EDITION',justify=CENTER,bg='grey',relief=SUNKEN).pack(side=LEFT)
+                                    Label(gui.bottomheader,width=10,text='# AVAILABLE',justify=CENTER,bg='grey',relief=SUNKEN).pack(side=LEFT)
+                                    created = True
+
+                                gui.frame = Frame(gui.bottomframe)
+                                gui.frame.pack()
+
+                                Label(gui.frame,width=18,text=str(item[0]),justify=CENTER,relief=SUNKEN).pack(side=LEFT,expand=True,fill=Y)
+                                Label(gui.frame,width=30,text=str(item[1]),justify=CENTER,wraplength=250,relief=SUNKEN).pack(side=LEFT,expand=True,fill=Y)
+                                Label(gui.frame,width=10,text=str(item[2]),justify=CENTER,relief=SUNKEN).pack(side=LEFT,expand=True,fill=Y)
+                                Label(gui.frame,width=10,text=str(item[4]),justify=CENTER,relief=SUNKEN).pack(side=LEFT,expand=True,fill=Y)
+
+
+                        gui.entryframe = Frame(gui.topframe)
+                        gui.entryframe.pack()
+
+                        gui.holddate = StringVar()
+                        gui.returndate=StringVar()
+
+                        gui.currentdate = clock.datetime.today()
+                        gui.holddate.set(str(clock.datetime.strftime(gui.currentdate,'%Y-%m-%d'))) #a string with current date as 'YYYY-MM-DD'
+
+                        gui.currentdateplus17 = clock.datetime.today() + clock.timedelta(days=17)
+                        gui.returndate.set(str(clock.datetime.strftime(gui.currentdateplus17,'%Y-%m-%d')))
+
+
+                        Label(gui.entryframe,text='Hold Request Date :').pack(side=LEFT)
+                        gui.holddateentry = Entry(gui.entryframe,bg='grey',textvariable=gui.holddate,width=10)
+                        gui.holddateentry.pack(side=LEFT)
+
+                        Label(gui.entryframe,text='Estimated Return Date :').pack(side=LEFT)
+                        gui.returndateentry = Entry(gui.entryframe,bg='grey',textvariable=gui.returndate,width=10)
+                        gui.returndateentry.pack(side=LEFT)
+
+
+                        gui.buttonframe = Frame(gui.topframe)
+                        gui.buttonframe.pack()
+                        gui.cancelButton=Button(gui.buttonframe,text='Return To LMS',pady=15,command=gui.destroy)
+                        gui.cancelButton.pack(side=LEFT)
+                        gui.submitButton=Button(gui.buttonframe,text='Submit',pady=15,command=placehold)
+                        gui.submitButton.pack(side=LEFT)
+
+
+                else:
+                    messagebox.showerror('Input Required','You must enter a search input.')
+            else:
+                messagebox.showerror('Selection Required','You must select a search field.')
 
 
         topone = Frame(self.root3.topright)
         topone.pack(expand=True,fill=BOTH)
         Label(topone,text='SEARCH FOR A BOOK',bg='blue',fg='yellow',font='Helvetica 16').pack(expand=True,fill=X)
-        self.getpublisher = Entry(topone, width=30, textvariable=self.publisher)
-        self.getpublisher.pack(side=RIGHT)
-        Label(topone,text="Publisher:").pack(side=RIGHT)
-        self.getisbn = Entry(topone, width=30, textvariable=self.isbn)
-        self.getisbn.pack(side=RIGHT)
-        Label(topone,text="ISBN:").pack(side=RIGHT)
 
         toptwo = Frame(self.root3.topright)
         toptwo.pack(expand=True,fill=BOTH)
-        self.getedition = Entry(toptwo, width=30, textvariable=self.edition)
-        self.getedition.pack(side=RIGHT)
-        Label(toptwo,text="Edition:").pack(side=RIGHT)
-        Label(toptwo,text="Title:").pack(side=LEFT)
-        self.getedition = Entry(toptwo, width=30, textvariable=self.title)
-        self.getedition.pack(side=LEFT)
-
+        self.getsearchValue = Entry(toptwo, width=30, textvariable=self.searchValue)
+        self.getsearchValue.pack()
 
         topthree = Frame(self.root3.topright)
         topthree.pack(expand=True,fill=BOTH)
-        self.getauthor = Entry(topthree, width=30, textvariable=self.author)
-        self.getauthor.pack(side=RIGHT)
-        Label(topthree,text='Author').pack(side=RIGHT)
+
+        Radiobutton(topthree, text = "ISBN", variable=self.searchField, value = "isbn").pack(side=RIGHT)
+        Radiobutton(topthree, text = "TITLE", variable=self.searchField, value = "title").pack(side=RIGHT)
+        Radiobutton(topthree, text = "AUTHOR", variable=self.searchField, value = "author_name").pack(side=RIGHT)
+        self.searchField.set('ISBN')
 
         topfour = Frame(self.root3.topright)
         topfour.pack(expand=True,fill=BOTH)
-        Button(topfour,text='Search',font='20',command=self.bookSearch).pack(expand=True,fill=BOTH)
+        Button(topfour,text='Search',font='20',command=bookSearch).pack(expand=True,fill=BOTH)
+
+        ##--------------[        LOG OFF           ]---------------##
+        ##-------------[           AREA           ]----------------##
 
         bottomone = Frame(self.root3.bottomright)
         bottomone.pack(expand=True,fill=BOTH,side=BOTTOM)
         Button(bottomone,text='Close LMS',command=self.root.destroy).pack(side=RIGHT,expand=True,fill=BOTH)
         Label(bottomone, image=self.image).pack(side=RIGHT)
         Button(bottomone,text='Log Off',command=self.root.deiconify).pack(side=RIGHT,expand=True,fill=BOTH)
-
-
-
-    def displayReservations(self):
-        #get the number of reservations the user has already
-        c=self.Connect()
-
-        sql = 'SELECT * FROM RoomReservations WHERE ReservedBy =%s'
-        c.execute(sql,self.currentuser)
-        stuff = []
-        for item in c:
-            #print(item)
-            stuff.append(item)
-        self.reservations = len(stuff)
-        i = self.reservations
-
-        if i ==0:
-            self.currentreservation1.set('No Reservations')
-        elif i == 1:
-            self.currentreservation1.set("Room {0} on {1} Floor {2} is reserved for {3} at {4} hours.".format(stuff[0][2],stuff[0][0],stuff[0][1],stuff[0][3],stuff[0][4]))
-        else:
-            self.currentreservation1.set("Room {0} on {1} Floor {2} is reserved for {3} at {4} hours.".format(stuff[1][2],stuff[1][0],stuff[1][1],stuff[1][3],stuff[1][4]))
-            self.root3.reservedisplay2=Entry(self.frameB, width=50, textvariable=self.currentreservation2, state='readonly')
-            self.root3.reservedisplay2.pack(side=RIGHT)
-            self.currentreservation2.set("Room {0} on {1} Floor {2} is reserved for {3} at {4} hours.".format(stuff[0][2],stuff[0][0],stuff[0][1],stuff[0][3],stuff[0][4]))
 
     def Logout(self):
         #closes the Homepage window and returns the
@@ -363,140 +510,13 @@ class Gateway:
         self.root.deiconify()
         pass
 
-    def stats(self):
-        self.root3.withdraw()
-        self.root5 = Toplevel()
-        self.root5.title("Statistics")
-        self.stat1=StringVar()
-        self.stat2=StringVar()
-        one = Frame(self.root5)
-        one.pack(anchor=E)
-        Entry(one,textvariable=self.stat1,state='readonly').pack(side=RIGHT)
-        Label(one,text="The average number of reservations per person is:").pack(side=RIGHT)
-
-        two = Frame(self.root5)
-        two.pack(anchor=E)
-        Entry(two,textvariable=self.stat2,state='readonly').pack(side=RIGHT)
-        Label(two,text="The Busiest Building:").pack(side=RIGHT)
-
-        Button(self.root5,text="          Back                    ", command=self.switch4).pack()
-
-        c = self.Connect()
-        sql = "SELECT AVG(NumberOfReservations) FROM ReservationUser"
-        c.execute(sql)
-        for item in c:
-            avg = item[0]
-            self.stat1.set(str(avg))
-
-        a=c.execute("SELECT * FROM RoomReservations WHERE Building=%s",'CULC')
-        b=c.execute("SELECT * FROM RoomReservations WHERE Building=%s",'Klaus')
-        print(a,b)
-
-        c.close()
-        if a==b:
-            self.stat2.set("Both are busy with " + str(a) + " reservations so far.")
-        elif a>b:
-            self.stat2.set("CULC is more busy with " + str(a) + " reservations so far.")
-        else:
-            self.stat2.set("Klaus is more busy with " + str(b) + " reservations so far.")
-
-    def availableReservations(self):
-        if self.reservations == 2:
-            messagebox.showerror('Error', 'You can only make 2 reservations per week. Try again next week.')
-        else:
-            choices = (self.buildingChoice.get(),self.floorChoice.get(),self.roomChoice.get(),self.dayChoice.get(),self.timeChoice.get())
-            if 99 in choices:
-                messagebox.showwarning('Search Failure','Please choose a valid option from each category.')
-            else:
-                self.values = (self.building[self.buildingChoice.get()],self.floorChoice.get(),self.roomChoice.get(),self.day[self.dayChoice.get()])
-                print(self.values)
-                #query the room for the time frame...
-                c = self.Connect()
-                sql = "SELECT Time FROM RoomReservations WHERE Building=%s AND Floor=%s AND RoomNo=%s AND Day=%s"
-                c.execute(sql,self.values)
-                times = []
-                for time in c:
-                    times.append(time[0])
-                c.close()
-                print("these are the times from the sql ", times)
-                if len(times)>=4:
-                    messagebox.showwarning('Search Failure','This Room is unavailable for the selected day and time')
-                else:
-                    #make the reservation window
-                    self.root3.withdraw()
-                    self.root4 = Toplevel()
-                    self.root4.title("Available Rooms")
-                    wtf = Frame(self.root4)
-                    wtf.pack(anchor=E)
-                    Label(wtf,text='Building',bd=3,relief=RAISED).pack(side=LEFT,expand=True,fill=BOTH)
-                    Label(wtf,text=' Floor ',bd=3,relief=RAISED).pack(side=LEFT,expand=True,fill=BOTH)
-                    Label(wtf,text=' Room ',bd=3,relief=RAISED).pack(side=LEFT,expand=True,fill=BOTH)
-                    Label(wtf,text='    Day    ',bd=3,relief=RAISED).pack(side=LEFT,expand=True,fill=BOTH)
-                    Label(wtf,text='   Time   ',bd=3,relief=RAISED).pack(side=LEFT,expand=True,fill=BOTH)
-                    Label(wtf,text='Select',bd=3,relief=RAISED).pack(side=LEFT,expand=True,fill=BOTH)
-                    self.crapvariable = IntVar()
-                    self.crapvariable.set(99)
-                    x = self.timeChoice.get()
-                    if x==0:
-                        self.xvalue=['08:00','09:00','10:00','11:00']
-                    elif x==1:
-                        self.xvalue=['12:00','13:00','14:00','15:00']
-                    elif x==2:
-                        self.xvalue=['16:00','17:00','18:00','19:00']
-                    else:
-                        self.xvalue=['20:00','21:00','22:00','23:00']
-
-                    wtf2 = Frame(self.root4)
-                    wtf2.pack(expand=True,fill=BOTH,anchor=E)
-                    z=1
-                    for item in self.xvalue:
-                        print(item)
-                        if item not in times:
-                            print(item)
-                            Radiobutton(wtf2, variable=self.crapvariable, value=self.xvalue.index(item)).grid(row=z,column=5)
-                            Label(wtf2,text="   "+ str(self.values[0])).grid(row=z,column=0)
-                            Label(wtf2,text="      "+ str(self.values[1])).grid(row=z,column=1)
-                            Label(wtf2,text="         "+ str(self.values[2])).grid(row=z,column=2)
-                            Label(wtf2,text="      "+self.values[3]).grid(row=z,column=3)
-                            Label(wtf2,text="  " + str(item) + "       ").grid(row=z,column=4)
-                            z+=1
-                    wtf3 = Frame(self.root4)
-                    wtf3.pack(anchor=E)
-                    Button(wtf3,text='Cancel',command=self.switch3).pack(side=RIGHT)
-                    Button(wtf3,text='Submit Reservation',command=self.makeReservation).pack(side=RIGHT)
-
-    def makeReservation(self):
-        if self.crapvariable.get()==99:
-            messagebox.showinfo('Reservation Incomplete','You must select a time for the reservation.')
-        else:
-            print((self.values[0],self.values[1],self.values[2],self.values[3],self.xvalue[self.crapvariable.get()],self.currentuser))
-            c = self.Connect()
-            sql = "INSERT INTO RoomReservations (Building, Floor, RoomNo, Day, Time, ReservedBy) Values (%s, %s, %s, %s, %s, %s)"
-            c.execute(sql,(self.values[0],self.values[1],self.values[2],self.values[3],self.xvalue[self.crapvariable.get()],self.currentuser))
-
-
-            sql = "Select NumberOfReservations From ReservationUser WHERE USERNAME=%s"
-            c.execute(sql,(self.currentuser))
-
-            for item in c:
-                newvalue=int(item[0])
-            newvalue+=1
-
-            sql = "UPDATE ReservationUser SET NumberOfReservations=%s WHERE USERNAME=%s"
-            c.execute(sql,(str(newvalue),self.currentuser))
-
-            c.close()
-            messagebox.showinfo('Reservation Complete','Congratulations, you have reserved your room. Click ok to go back to the homepage.')
-            self.root4.destroy()
-            self.root3.deiconify()
-
     def LoginCheck(self):
         usrname = self.username.get()#get credentials from the login entries
         passwrd = self.password.get()
         self.currentuser = self.username.get()
 
         #clear out credentials after retrieval
-        self.clear()
+        self.clear2()
 
         c=self.Connect()#create the database connection object
         sql = "SELECT username, password FROM User WHERE username= %s AND password= %s"
@@ -518,48 +538,17 @@ class Gateway:
             messagebox.showerror("Login Unsuccessful","Not found, please enter a different username/password")
         c.close()
 
-    def cancelReservation(self):
-        c=self.Connect()
-        sql = "DELETE FROM RoomReservations WHERE ReservedBy = %s"
-        c.execute(sql,self.currentuser)
-
-
-        sql = "Select NumberOfReservations From ReservationUser WHERE USERNAME=%s"
-        c.execute(sql,(self.currentuser))
-
-        for item in c:
-            newvalue=int(item[0])
-        if newvalue != 0:
-            sql = "UPDATE ReservationUser SET NumberOfReservations=%s WHERE USERNAME=%s"
-            c.execute(sql,(0,self.currentuser))
-            messagebox.showwarning("Succesful","Congratulations. You have deleted your reservations.")
-            self.currentreservation1.set("No Reservations")
-            try:
-                self.currentreservation2.set("")
-            except:
-                pass
-        else:
-            messagebox.showerror("Error","There are currently no reservations to cancel.")
-
-        c.close()
-
-    def createProfile(self):
-        print('made a profile')
-        self.root22.withdraw()
-        self.Homepage()
-
-
-
-
+    #-------GUI Switches-------#
     def switch2122(self):
         self.root21.withdraw()
         self.root22.deiconify()
 
     def switch22(self):
+        self.eraseUser(self.username.get())
+        self.clear()
         self.root22.withdraw()
         self.root.deiconify()
 
-    #-------GUI Switches-------#
     def switch34(self):
         self.root4 = Toplevel()
         gui=self.root4
@@ -786,7 +775,7 @@ class Gateway:
         def query():
             sql1='UPDATE Issues SET return_date=GETDATE() WHERE isbn=%s AND copynumber=%s AND username=%s'
             sql2='UPDATE BookCopy SET is_checked_out=%s WHERE isbn=%s AND copy=%s'
-            
+
 
         gui.title('GT Library Management System')
         gui.header = Label(gui,text='RETURN BOOK',bg='blue',fg='yellow',font='Helvetica 16',width=60)
@@ -817,7 +806,6 @@ class Gateway:
         gui.frame4.pack(expand=True,fill=BOTH)
         gui.cancelbutton = Button(gui.frame4,text='Cancel',width=16,command=gui.destroy).pack(side=RIGHT)
         gui.returnbutton = Button(gui.frame4,text='Return',width=16,command=print(gui.query())).pack(side=RIGHT)
-
 
     def switch39(self):
         self.root9 = Toplevel()
@@ -883,14 +871,17 @@ class Gateway:
         gui.cancelbutton = Button(gui.frame6,text='Cancel',width=16,command=gui.destroy)
         gui.cancelbutton.pack(side=RIGHT)
 
-
     def switch312(self):
         self.root12 = Toplevel()
         gui=self.root12
 
         #--variables--#
-        gui.sql ={('jan','Fundamentals of Databases',14),('feb','Data Mining Priniples',12)}
+        gui.sql ="SELECT * FROM PopularBookReport WHERE Month = '1' OR Month = '2' ORDER BY Month ASC, number DESC LIMIT 6"
 
+        c = self.Connect()
+        c.execute(gui.sql)
+        gui.report = c.fetchall()
+        c.close()
 
         gui.title('GT Library Management System')
         gui.header = Label(gui,text='POPULAR BOOKS REPORT',bg='blue',fg='yellow',font='Helvetica 16',width=60)
@@ -901,80 +892,117 @@ class Gateway:
 
         gui.header = Frame(gui.mainframe)
         gui.header.pack()
-        gui.headermonth=Label(gui.header,width=20,text='MONTH',justify=CENTER,bg='grey',relief=SUNKEN)
+        gui.headermonth=Label(gui.header,width=10,text='MONTH',justify=CENTER,bg='grey',relief=SUNKEN)
         gui.headermonth.pack(side=LEFT)
-        gui.headertitle=Label(gui.header,width=20,text='TITLE',justify=CENTER,bg='grey',relief=SUNKEN)
+        gui.headertitle=Label(gui.header,width=30,text='TITLE',justify=CENTER,bg='grey',relief=SUNKEN)
         gui.headertitle.pack(side=LEFT)
-        gui.headercheckouts=Label(gui.header,width=20,text='# CHECKOUTS',justify=CENTER,bg='grey',relief=SUNKEN)
+        gui.headercheckouts=Label(gui.header,width=10,text='# CHECKOUTS',justify=CENTER,bg='grey',relief=SUNKEN)
         gui.headercheckouts.pack(side=LEFT)
 
-        for item in gui.sql:
+        for item in gui.report:
             gui.frame=Frame(gui.mainframe)
             gui.frame.pack()
-            for entry in item:
-                Label(gui.frame,width=20,text=str(entry),justify=CENTER,relief=SUNKEN).pack(side=LEFT)
+            Label(gui.frame,width=10,text=str(item[0]),justify=CENTER,relief=SUNKEN).pack(side=LEFT,expand=True,fill=Y)
+            Label(gui.frame,width=30,text=str(item[1]),justify=CENTER,wraplength=250,relief=SUNKEN).pack(side=LEFT,expand=True,fill=Y)
+            Label(gui.frame,width=10,text=str(item[2]),justify=CENTER,relief=SUNKEN).pack(side=LEFT,expand=True,fill=Y)
 
         gui.cancelButton=Button(gui.mainframe,text='Return To LMS',pady=15,command=gui.destroy)
         gui.cancelButton.pack(side=BOTTOM)
 
     def switch313(self):
-        self.root13 = Toplevel()
-        gui=self.root13
 
-        #--variables--#
-        gui.sql ={('jan','John Barbour',14),('feb','Shawn Kim',12)}
+        #--data grab--#
+        sql ="SELECT * FROM FrequentUserReport WHERE (Month = '1' OR Month = '2')AND numCheckout>=10  ORDER BY Month ASC, numCheckout DESC LIMIT 10"
 
+        c = self.Connect()
+        c.execute(sql)
+        report = c.fetchall()
+        print(report)
+        c.close()
+        print(len(report))
 
-        gui.title('GT Library Management System')
-        gui.header = Label(gui,text='FREQUENT USERS REPORT',bg='blue',fg='yellow',font='Helvetica 16',width=60)
-        gui.header.pack(expand=True,fill=X)
+        if len(report)==0:
+            messagebox.showwarning('Report Unavailable','There are no frequent users to report.')
+        else:
+            self.root13 = Toplevel()
+            gui=self.root13
+            gui.report=report
+            gui.title('GT Library Management System')
+            gui.header = Label(gui,text='FREQUENT USERS REPORT',bg='blue',fg='yellow',font='Helvetica 16',width=60)
+            gui.header.pack(expand=True,fill=X)
 
-        gui.mainframe=Frame(gui,pady=15,padx=15)
-        gui.mainframe.pack(expand=True,fill=BOTH)
+            gui.mainframe=Frame(gui,pady=15,padx=15)
+            gui.mainframe.pack(expand=True,fill=BOTH)
 
-        gui.header = Frame(gui.mainframe)
-        gui.header.pack()
-        gui.headermonth=Label(gui.header,width=20,text='MONTH',justify=CENTER,bg='grey',relief=SUNKEN)
-        gui.headermonth.pack(side=LEFT)
-        gui.headertitle=Label(gui.header,width=20,text='USERNAME',justify=CENTER,bg='grey',relief=SUNKEN)
-        gui.headertitle.pack(side=LEFT)
-        gui.headercheckouts=Label(gui.header,width=20,text='# CHECKOUTS',justify=CENTER,bg='grey',relief=SUNKEN)
-        gui.headercheckouts.pack(side=LEFT)
+            gui.header = Frame(gui.mainframe)
+            gui.header.pack()
+            gui.headermonth=Label(gui.header,width=10,text='MONTH',justify=CENTER,bg='grey',relief=SUNKEN)
+            gui.headermonth.pack(side=LEFT)
+            gui.headertitle=Label(gui.header,width=30,text='USERNAME',justify=CENTER,bg='grey',relief=SUNKEN)
+            gui.headertitle.pack(side=LEFT)
+            gui.headercheckouts=Label(gui.header,width=10,text='# CHECKOUTS',justify=CENTER,bg='grey',relief=SUNKEN)
+            gui.headercheckouts.pack(side=LEFT)
 
-        for item in gui.sql:
-            gui.frame=Frame(gui.mainframe)
-            gui.frame.pack()
-            for entry in item:
-                Label(gui.frame,width=20,text=str(entry),justify=CENTER,relief=SUNKEN).pack(side=LEFT)
+            for item in gui.report:
+                gui.frame=Frame(gui.mainframe)
+                gui.frame.pack()
+                Label(gui.frame,width=10,text=str(item[0]),justify=CENTER,relief=SUNKEN).pack(side=LEFT,expand=True,fill=Y)
+                Label(gui.frame,width=30,text=str(item[1]),justify=CENTER,wraplength=250,relief=SUNKEN).pack(side=LEFT,expand=True,fill=Y)
+                Label(gui.frame,width=10,text=str(item[2]),justify=CENTER,relief=SUNKEN).pack(side=LEFT,expand=True,fill=Y)
 
-        gui.cancelButton=Button(gui.mainframe,text='Return To LMS',pady=15,command=gui.destroy)
-        gui.cancelButton.pack(side=BOTTOM)
+            gui.cancelButton=Button(gui.mainframe,text='Return To LMS',pady=15,command=gui.destroy)
+            gui.cancelButton.pack(side=BOTTOM)
 
     def switch314(self):
         self.root14 = Toplevel()
         gui=self.root14
 
-        #--variables--#
-        gui.sql ={('jan','Physics',2),('jan','History',1)}
+
 
         def showReport():
+            report = [];
+
+            #--data grab--#
+            gui.m = self.month2num(gui.month.get());
+
+            sql ="SELECT (Subject,number) FROM DamagedBookReport WHERE Month = %s AND Subject = %s"
+
+            print(gui.m)
+            print(gui.subject1.get())
+
+            c = self.Connect()
+            c.execute(sql,(gui.m,gui.subject1.get()))
+            report.append(c.fetchall())
+
+            c.execute(sql,(gui.m,gui.subject2.get()))
+            report.append(c.fetchall())
+
+            c.execute(sql,(gui.m,gui.subject3.get()))
+            report.append(c.fetchall())
+
+            print(report)
+            c.close()
+            print(len(report))
+
             gui.mainframebottom=Frame(gui,pady=15,padx=15)
             gui.mainframebottom.pack(expand=True,fill=BOTH)
 
             gui.header = Frame(gui.mainframebottom)
             gui.header.pack()
-            gui.headermonth=Label(gui.header,width=20,text='MONTH',justify=CENTER,bg='grey',relief=SUNKEN)
+            gui.headermonth=Label(gui.header,width=10,text='MONTH',justify=CENTER,bg='grey',relief=SUNKEN)
             gui.headermonth.pack(side=LEFT)
-            gui.headertitle=Label(gui.header,width=20,text='SUBJECT',justify=CENTER,bg='grey',relief=SUNKEN)
+            gui.headertitle=Label(gui.header,width=10,text='SUBJECT',justify=CENTER,bg='grey',relief=SUNKEN)
             gui.headertitle.pack(side=LEFT)
-            gui.headercheckouts=Label(gui.header,width=20,text='# DAMAGED',justify=CENTER,bg='grey',relief=SUNKEN)
+            gui.headercheckouts=Label(gui.header,width=10,text='# DAMAGED',justify=CENTER,bg='grey',relief=SUNKEN)
             gui.headercheckouts.pack(side=LEFT)
 
-            for item in gui.sql:
+            for item in report:
                 gui.frame=Frame(gui.mainframebottom)
                 gui.frame.pack()
-                for entry in item:
-                    Label(gui.frame,width=20,text=str(entry),justify=CENTER,relief=SUNKEN).pack(side=LEFT)
+
+                Label(gui.frame,width=10,text=str(item[0]),justify=CENTER,relief=SUNKEN).pack(side=LEFT,expand=True,fill=Y)
+                Label(gui.frame,width=10,text=str(item[1]),justify=CENTER,wraplength=250,relief=SUNKEN).pack(side=LEFT,expand=True,fill=Y)
+                Label(gui.frame,width=10,text=str(item[2]),justify=CENTER,relief=SUNKEN).pack(side=LEFT,expand=True,fill=Y)
 
             gui.cancelButton=Button(gui.mainframebottom,text='Return To LMS',pady=15,command=gui.destroy)
             gui.cancelButton.pack(side=BOTTOM)
@@ -987,48 +1015,95 @@ class Gateway:
         gui.mainframetop=Frame(gui,pady=15,padx=15)
         gui.mainframetop.pack(expand=True,fill=BOTH)
 
+        gui.mainframemiddle=Frame(gui,pady=15,padx=15)
+        gui.mainframemiddle.pack(expand=True,fill=BOTH)
 
-        gui.showReportButton=Button(gui.mainframetop,text='Show Report',pady=15,command=showReport)
-        gui.showReportButton.pack(side=BOTTOM)
+        gui.topframe1 = Frame(gui.mainframetop)
+        gui.topframe1.pack()
 
+        Label(gui.topframe1,text="SUBJECT",padx=5).pack(side=LEFT)
+        gui.subject1 = StringVar()
+        gui.subject1.set("")# default value
+        gui.selectsubject1 = OptionMenu(gui.topframe1, gui.subject1,"         ","Business","Children","Computer","Law","Science")
+        gui.selectsubject1.config(width=10)
+        gui.selectsubject1.pack(side=LEFT,expand=True,fill=BOTH)
+
+        Label(gui.topframe1,text="SUBJECT",padx=5).pack(side=LEFT)
+        gui.subject2 = StringVar()
+        gui.subject2.set("")# default value
+        gui.selectsubject2 = OptionMenu(gui.topframe1, gui.subject2,"         ","Business","Children","Computer","Law","Science")
+        gui.selectsubject2.config(width=10)
+        gui.selectsubject2.pack(side=LEFT,expand=True,fill=BOTH)
+
+        Label(gui.topframe1,text="SUBJECT",padx=5).pack(side=LEFT)
+        gui.subject3 = StringVar()
+        gui.subject3.set("")# default value
+        gui.selectsubject3 = OptionMenu(gui.topframe1, gui.subject3,"         ","Business","Children","Computer","Law","Science")
+        gui.selectsubject3.config(width=10)
+        gui.selectsubject3.pack(side=LEFT,expand=True,fill=BOTH)
+
+        gui.topframe2 = Frame(gui.mainframetop)
+        gui.topframe2.pack()
+
+        Label(gui.topframe2,text="MONTH",padx=5).pack(side=LEFT)
+        gui.month = StringVar()
+        gui.month.set("")# default value
+        gui.selectmonth = OptionMenu(gui.topframe2, gui.month,'          ','Janurary','February','March','April','May','June','July','August','September','October','November','December')
+        gui.selectmonth.config(width=10)
+        gui.selectmonth.pack(side=LEFT,expand=True,fill=BOTH)
+
+        Button(gui.mainframemiddle,text='Show Report',pady=15,command=showReport).pack(side=BOTTOM)
 
     def switch315(self):
-        self.root15 = Toplevel()
-        gui=self.root15
+        #--data grab--#
+        sql ="SELECT * FROM PopularSubjectReport WHERE Month = '1' OR Month = '2' ORDER BY Month ASC, num_checkout DESC LIMIT 6"
 
-        #--variables--#
-        gui.sql ={('jan','Computer Science',14),('feb','History',12)}
+        c = self.Connect()
+        c.execute(sql)
+        report = c.fetchall()
+        c.close()
+        if len(report)==0:
+            messagebox.showwarning('Report Unavailable','There is not enough data to compile a report.')
+        else:
+            self.root15 = Toplevel()
+            gui=self.root15
+            gui.report=report
+            gui.title('GT Library Management System')
+            gui.header = Label(gui,text='POPULAR SUBJETS REPORT',bg='blue',fg='yellow',font='Helvetica 16',width=60)
+            gui.header.pack(expand=True,fill=X)
 
+            gui.mainframe=Frame(gui,pady=15,padx=15)
+            gui.mainframe.pack(expand=True,fill=BOTH)
 
-        gui.title('GT Library Management System')
-        gui.header = Label(gui,text='POPULAR SUBJECT REPORT',bg='blue',fg='yellow',font='Helvetica 16',width=60)
-        gui.header.pack(expand=True,fill=X)
+            gui.header = Frame(gui.mainframe)
+            gui.header.pack()
+            gui.headermonth=Label(gui.header,width=20,text='MONTH',justify=CENTER,bg='grey',relief=SUNKEN)
+            gui.headermonth.pack(side=LEFT)
+            gui.headertitle=Label(gui.header,width=20,text='SUBJECT',justify=CENTER,bg='grey',relief=SUNKEN)
+            gui.headertitle.pack(side=LEFT)
+            gui.headercheckouts=Label(gui.header,width=20,text='# CHECKOUTS',justify=CENTER,bg='grey',relief=SUNKEN)
+            gui.headercheckouts.pack(side=LEFT)
 
-        gui.mainframe=Frame(gui,pady=15,padx=15)
-        gui.mainframe.pack(expand=True,fill=BOTH)
+            for item in gui.report:
+                gui.frame=Frame(gui.mainframe)
+                gui.frame.pack()
+                Label(gui.frame,width=20,text=str(item[0]),justify=CENTER,relief=SUNKEN).pack(side=LEFT,expand=True,fill=Y)
+                Label(gui.frame,width=20,text=str(item[1]),justify=CENTER,wraplength=250,relief=SUNKEN).pack(side=LEFT,expand=True,fill=Y)
+                Label(gui.frame,width=20,text=str(item[2]),justify=CENTER,relief=SUNKEN).pack(side=LEFT,expand=True,fill=Y)
 
-        gui.header = Frame(gui.mainframe)
-        gui.header.pack()
-        gui.headermonth=Label(gui.header,width=20,text='MONTH',justify=CENTER,bg='grey',relief=SUNKEN)
-        gui.headermonth.pack(side=LEFT)
-        gui.headertitle=Label(gui.header,width=20,text='TOP SUBJECT',justify=CENTER,bg='grey',relief=SUNKEN)
-        gui.headertitle.pack(side=LEFT)
-        gui.headercheckouts=Label(gui.header,width=20,text='# CHECKOUTS',justify=CENTER,bg='grey',relief=SUNKEN)
-        gui.headercheckouts.pack(side=LEFT)
+            gui.cancelButton=Button(gui.mainframe,text='Return To LMS',pady=15,command=gui.destroy)
+            gui.cancelButton.pack(side=BOTTOM)
 
-        for item in gui.sql:
-            gui.frame=Frame(gui.mainframe)
-            gui.frame.pack()
-            for entry in item:
-                Label(gui.frame,width=20,text=str(entry),justify=CENTER,relief=SUNKEN).pack(side=LEFT)
-
-        gui.cancelButton=Button(gui.mainframe,text='Return To LMS',pady=15,command=gui.destroy)
-        gui.cancelButton.pack(side=BOTTOM)
     #-------random functions------#
 
     def clear(self):
         self.lastname.set("")
         self.username.set("")
+        self.password.set("")
+        self.confirmpassword.set("")
+
+    def clear2(self):
+        self.lastname.set("")
         self.password.set("")
         self.confirmpassword.set("")
 
@@ -1079,11 +1154,11 @@ class Gateway:
             self.root21.withdraw()
             self.root22.deiconify()
 
-
     def switch(self):
-        self.clear()
+        self.clear2()
         self.root.withdraw()
         self.root21.deiconify()
+
     def Connect(self):
         #this points to the connection object, this way we can get a cursor from db.cursor()
         try:
@@ -1099,12 +1174,20 @@ class Gateway:
             messagebox.showerror("No connection!", "Can't connect to the database. Please check the internet connection.(If you're not on GTwifi, is your VPN running?)")
             return None
 
-    def bookSearch(self):
-        print('Search 4 books!')
+    def eraseUser(self,x):
+        username = x
+        c = self.Connect()
+        sql = "DELETE FROM User WHERE Username = %s"
+        c.execute(sql,(username))
+        print(c.fetchone)
+        self.db.commit()
+        c.close()
 
-
-
-    
+    def month2num(self,x):
+        table = (('1','January'),('2','February'),('3','March'),('4','April'),('5','May'),('6','June'),('7','July'),('8','August'),('9','September'),('10','October'),('11','November'),('12','December'));
+        for item in table:
+            if x==item[1]:
+                return item[0];
 
 win = Tk()
 app = Gateway(win)
