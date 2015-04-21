@@ -501,7 +501,7 @@ class Gateway:
         bottomone.pack(expand=True,fill=BOTH,side=BOTTOM)
         Button(bottomone,text='Close LMS',command=self.root.destroy).pack(side=RIGHT,expand=True,fill=BOTH)
         Label(bottomone, image=self.image).pack(side=RIGHT)
-        Button(bottomone,text='Log Off',command=self.root.deiconify).pack(side=RIGHT,expand=True,fill=BOTH)
+        Button(bottomone,text='Log Off',command=self.logoff).pack(side=RIGHT,expand=True,fill=BOTH)
 
     def Logout(self):
         #closes the Homepage window and returns the
@@ -1173,6 +1173,9 @@ class Gateway:
         except:
             messagebox.showerror("No connection!", "Can't connect to the database. Please check the internet connection.(If you're not on GTwifi, is your VPN running?)")
             return None
+    def logoff(self):
+        self.root3.destroy()
+        self.clear()
 
     def eraseUser(self,x):
         username = x
